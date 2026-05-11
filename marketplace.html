@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketplace | Where Is My Milk</title>
+<meta name="description" content="Browse and order fresh local dairy products from certified farms within 3km of your location.">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<style>
+.page-offset { padding-top: var(--nav-height); }
+
+/* ─── Page Header ─── */
+.marketplace-header {
+  background: linear-gradient(135deg, var(--surface-low) 0%, var(--primary-fixed) 100%);
+  padding: var(--sp-3xl) 0 var(--sp-2xl);
+  border-bottom: 1px solid var(--outline-variant);
+}
+.marketplace-header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--sp-xl);
+}
+.marketplace-search-bar {
+  display: flex; align-items: center; gap: var(--sp-sm);
+  background: var(--surface-lowest);
+  border: 1.5px solid var(--outline-variant);
+  border-radius: var(--radius-full);
+  padding: 10px 20px;
+  width: 360px;
+  max-width: 100%;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+.marketplace-search-bar:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,86,210,0.12);
+}
+.marketplace-search-bar input {
+  flex: 1; border: none; outline: none; font-family: var(--font-family);
+  font-size: var(--body-md); color: var(--on-surface); background: transparent;
+}
+.marketplace-search-bar input::placeholder { color: var(--outline); }
+.search-icon { color: var(--outline); font-size: 20px; }
+.live-badge {
+  display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+  background: rgba(40,167,69,0.1); border: 1px solid rgba(40,167,69,0.2);
+  border-radius: var(--radius-full);
+  font-size: var(--body-sm); font-weight: var(--fw-semibold); color: var(--secondary-dark);
+}
+
+/* ─── Filter Tabs ─── */
+.filter-bar {
+  display: flex; align-items: center; gap: var(--sp-sm);
+  overflow-x: auto; padding: var(--sp-md) 0;
+  scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: var(--radius-full);
+  font-size: var(--body-sm); font-weight: var(--fw-semibold);
+  color: var(--on-surface-variant); cursor: pointer;
+  border: 1.5px solid var(--outline-variant);
+  background: var(--surface-lowest);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+.filter-tab:hover { border-color: var(--primary); color: var(--primary); }
+.filter-tab.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0,86,210,0.25);
+}
+
+/* ─── Layout ─── */
+.marketplace-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--sp-2xl);
+  padding: var(--sp-2xl) 0 var(--sp-5xl);
+  align-items: start;
+}
+.sidebar-filter {
+  background: var(--surface-lowest);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant);
+  overflow: hidden;
+  position: sticky;
+  top: calc(var(--nav-height) + var(--sp-lg));
+}
+.sidebar-filter-header {
+  padding: var(--sp-xl);
+  border-bottom: 1px solid var(--outline-variant);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-filter-section {
+  padding: var(--sp-lg) var(--sp-xl);
+  border-bottom: 1px solid var(--outline-variant);
+}
+.filter-section-title {
+  font-size: var(--body-sm); font-weight: var(--fw-bold);
+  color: var(--on-surface); margin-bottom: var(--sp-md); display: flex;
+  align-items: center; justify-content: space-between; cursor: pointer;
+}
+.filter-option {
+  display: flex; align-items: center; gap: var(--sp-sm);
+  padding: 8px 0; cursor: pointer;
+}
+.filter-option input[type="checkbox"] {
+  width: 18px; height: 18px; border-radius: 4px;
+  accent-color: var(--primary); cursor: pointer;
+}
+.filter-option label {
+  font-size: var(--body-sm); color: var(--on-surface-variant);
+  cursor: pointer; flex: 1;
+}
+.filter-count {
+  font-size: 11px; font-weight: var(--fw-semibold);
+  color: var(--outline); background: var(--surface-container);
+  padding: 2px 6px; border-radius: var(--radius-full);
+}
+.range-slider {
+  width: 100%; accent-color: var(--primary);
+  margin-top: var(--sp-sm);
+}
+.range-labels {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--on-surface-variant); margin-top: 6px;
+}
+
+/* ─── Products Grid ─── */
+.products-area {}
+.products-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-xl); flex-wrap: wrap; gap: var(--sp-md);
+}
+.sort-select {
+  padding: 8px 32px 8px 12px;
+  border: 1.5px solid var(--outline-variant);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-size: var(--body-sm); color: var(--on-surface);
+  background: var(--surface-lowest);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23737785' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-xl);
+}
+
+/* Product Card */
+.mkt-card {
+  background: var(--surface-lowest);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s ease;
+  position: relative;
+}
+.mkt-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); }
+.mkt-card-img {
+  height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden; font-size: 72px;
+  transition: transform 0.4s ease;
+}
+.mkt-card:hover .mkt-card-img { background-size: 105%; }
+.mkt-card-img-inner { transition: transform 0.4s ease; }
+.mkt-card:hover .mkt-card-img-inner { transform: scale(1.1) translateY(-4px); }
+.mkt-card-tag {
+  position: absolute; top: var(--sp-sm); left: var(--sp-sm);
+}
+.mkt-card-fav {
+  position: absolute; top: var(--sp-sm); right: var(--sp-sm);
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--glass-bg); backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--transition-fast);
+  font-size: 16px;
+}
+.mkt-card-fav:hover { background: var(--error-container); transform: scale(1.1); }
+.mkt-card-body { padding: var(--sp-lg); }
+.mkt-card-farm {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--on-surface-variant); margin-bottom: 6px;
+}
+.mkt-card-farm-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--secondary); }
+.mkt-card-name { font-size: var(--body-md); font-weight: var(--fw-bold); color: var(--on-surface); margin-bottom: 4px; }
+.mkt-card-desc { font-size: 13px; color: var(--on-surface-variant); margin-bottom: var(--sp-md); line-height: 1.5; }
+.mkt-card-row { display: flex; align-items: center; justify-content: space-between; }
+.mkt-card-price { font-size: var(--h4-size); font-weight: var(--fw-extrabold); color: var(--primary); }
+.mkt-card-unit { font-size: 12px; color: var(--on-surface-variant); }
+.mkt-add-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--primary); color: #fff; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 20px; font-weight: 700;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-fast);
+}
+.mkt-add-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-lg); }
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--sp-sm); margin-top: var(--sp-3xl);
+}
+.page-btn {
+  width: 40px; height: 40px; border-radius: var(--radius-md);
+  border: 1.5px solid var(--outline-variant); background: var(--surface-lowest);
+  font-family: var(--font-family); font-size: var(--body-sm); font-weight: var(--fw-semibold);
+  color: var(--on-surface-variant); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition-fast);
+}
+.page-btn:hover, .page-btn.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+
+@media (max-width: 1100px) { .market-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { .marketplace-body { grid-template-columns: 1fr; } .sidebar-filter { position: static; } }
+@media (max-width: 520px) { .market-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Where Is My Milk</span>
+        <span class="nav-logo-tagline">Urban Dairy Exchange</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="dairy-map.html" class="nav-link"><span class="material-icons-round">map</span> Dairy Map</a>
+      <a href="marketplace.html" class="nav-link active"><span class="material-icons-round">storefront</span> Marketplace</a>
+      <a href="community-hub.html" class="nav-link"><span class="material-icons-round">groups</span> Community Hub</a>
+      <a href="milk-ledger.html" class="nav-link"><span class="material-icons-round">receipt_long</span> Milk Ledger</a>
+    </div>
+    <div class="nav-actions">
+      <a href="buyer-dashboard.html" class="btn btn-ghost btn-sm">My Account</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileMenu">
+  <a href="dairy-map.html" class="nav-link">Dairy Map</a>
+  <a href="marketplace.html" class="nav-link active">Marketplace</a>
+  <a href="community-hub.html" class="nav-link">Community Hub</a>
+  <a href="milk-ledger.html" class="nav-link">Milk Ledger</a>
+</div>
+
+<div class="page-offset">
+  <!-- Page Header -->
+  <div class="marketplace-header">
+    <div class="container">
+      <div class="marketplace-header-inner">
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:8px;">Live Marketplace</div>
+          <h1 class="h2">Fresh Dairy Near You</h1>
+          <p class="body-md text-muted" style="margin-top:4px;">📍 Indiranagar, Bengaluru — 14 certified partners within 3km</p>
+        </div>
+        <div style="display:flex;gap:var(--sp-md);align-items:center;flex-wrap:wrap;">
+          <div class="marketplace-search-bar">
+            <span class="material-icons-round search-icon">search</span>
+            <input type="text" placeholder="Search milk, dahi, paneer…">
+          </div>
+          <div class="live-badge">
+            <span class="status-dot status-online"></span> 14 active farms
+          </div>
+        </div>
+      </div>
+      <!-- Filter Tabs -->
+      <div class="filter-bar">
+        <button class="filter-tab active">🥛 All Products</button>
+        <button class="filter-tab">🐄 A2 Cow Milk</button>
+        <button class="filter-tab">🍶 Buffalo Milk</button>
+        <button class="filter-tab">🫙 Curd & Dahi</button>
+        <button class="filter-tab">🧀 Paneer</button>
+        <button class="filter-tab">🧈 Ghee</button>
+        <button class="filter-tab">🌿 Organic Only</button>
+        <button class="filter-tab">⭐ Top Rated</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marketplace Body -->
+  <div class="container">
+    <div class="marketplace-body">
+      <!-- Sidebar -->
+      <aside class="sidebar-filter">
+        <div class="sidebar-filter-header">
+          <span style="font-size:var(--body-md);font-weight:var(--fw-bold);">Filters</span>
+          <button class="btn btn-ghost btn-sm" style="padding:4px 10px;border-radius:var(--radius-full);font-size:12px;">Reset</button>
+        </div>
+        <div class="sidebar-filter-section">
+          <div class="filter-section-title">Milk Type <span>▾</span></div>
+          <div class="filter-option"><input type="checkbox" id="a2" checked><label for="a2">A2 Cow Milk</label><span class="filter-count">14</span></div>
+          <div class="filter-option"><input type="checkbox" id="buf"><label for="buf">Buffalo Milk</label><span class="filter-count">9</span></div>
+          <div class="filter-option"><input type="checkbox" id="dahi"><label for="dahi">Curd / Dahi</label><span class="filter-count">7</span></div>
+          <div class="filter-option"><input type="checkbox" id="pan"><label for="pan">Paneer</label><span class="filter-count">5</span></div>
+          <div class="filter-option"><input type="checkbox" id="ghee"><label for="ghee">Ghee</label><span class="filter-count">4</span></div>
+        </div>
+        <div class="sidebar-filter-section">
+          <div class="filter-section-title">Distance <span>▾</span></div>
+          <input type="range" class="range-slider" min="0.5" max="5" step="0.5" value="3">
+          <div class="range-labels"><span>0.5km</span><span>Within 3km</span><span>5km</span></div>
+        </div>
+        <div class="sidebar-filter-section">
+          <div class="filter-section-title">Price Range <span>▾</span></div>
+          <input type="range" class="range-slider" min="20" max="200" step="5" value="100">
+          <div class="range-labels"><span>₹20/L</span><span>₹100</span><span>₹200+</span></div>
+        </div>
+        <div class="sidebar-filter-section">
+          <div class="filter-section-title">Certifications <span>▾</span></div>
+          <div class="filter-option"><input type="checkbox" id="fssai" checked><label for="fssai">FSSAI Certified</label><span class="filter-count">14</span></div>
+          <div class="filter-option"><input type="checkbox" id="org"><label for="org">Certified Organic</label><span class="filter-count">6</span></div>
+          <div class="filter-option"><input type="checkbox" id="abf"><label for="abf">Antibiotic Free</label><span class="filter-count">11</span></div>
+          <div class="filter-option"><input type="checkbox" id="a2c"><label for="a2c">A2/A2 Protein</label><span class="filter-count">8</span></div>
+        </div>
+        <div class="sidebar-filter-section" style="border-bottom:none;">
+          <div class="filter-section-title">Availability <span>▾</span></div>
+          <div class="filter-option"><input type="checkbox" id="avail" checked><label for="avail">In Stock Now</label></div>
+          <div class="filter-option"><input type="checkbox" id="sub"><label for="sub">Accepts Subscriptions</label></div>
+          <div class="filter-option"><input type="checkbox" id="morn"><label for="morn">Morning Delivery (7AM)</label></div>
+        </div>
+      </aside>
+
+      <!-- Products -->
+      <div class="products-area">
+        <div class="products-top">
+          <p class="body-md" style="font-weight:var(--fw-semibold);">Showing <strong>42 products</strong> from <strong>14 certified farms</strong></p>
+          <select class="sort-select">
+            <option>Sort: Nearest First</option>
+            <option>Sort: Price Low–High</option>
+            <option>Sort: Price High–Low</option>
+            <option>Sort: Top Rated</option>
+            <option>Sort: Freshest</option>
+          </select>
+        </div>
+
+        <div class="market-grid" id="marketGrid">
+          <!-- Cards generated by JS below, but we place 9 static for non-JS fallback -->
+        </div>
+
+        <div class="pagination">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <span style="color:var(--outline);padding:0 4px;">…</span>
+          <button class="page-btn">8</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+const products = [
+  { emoji:'🥛', name:'Pure A2 Gir Cow Milk', farm:'Krishnamurthy Dairy', dist:'1.2km', price:'₹85', unit:'/litre', tag:'A2 Certified', tagClass:'chip-primary', color:'#e8f0fe', certs:['Organic','FSSAI'] },
+  { emoji:'🍶', name:'Creamy Buffalo Milk', farm:'Nandi Hills Farm', dist:'2.4km', price:'₹72', unit:'/litre', tag:'High Fat', tagClass:'chip-secondary', color:'#fff8e8', certs:['FSSAI'] },
+  { emoji:'🫙', name:'Thick Probiotic Dahi', farm:'Lakshmi Dairy Co.', dist:'1.8km', price:'₹65', unit:'/500g', tag:'Probiotic', tagClass:'chip-success', color:'#f0fff4', certs:['FSSAI'] },
+  { emoji:'🧈', name:'Cultured White Butter', farm:'Green Pastures', dist:'0.9km', price:'₹120', unit:'/200g', tag:'Artisanal', tagClass:'chip-primary', color:'#fffbeb', certs:['Organic'] },
+  { emoji:'🧀', name:'Fresh Paneer', farm:'City Dairy Hub', dist:'3.1km', price:'₹95', unit:'/250g', tag:'Daily Fresh', tagClass:'chip-surface', color:'#fce8ff', certs:['FSSAI'] },
+  { emoji:'🥛', name:'Low-Fat Toned Milk', farm:'Metro Milk Co.', dist:'2.0km', price:'₹55', unit:'/litre', tag:'Low Fat', tagClass:'chip-outline', color:'#e8f4f8', certs:['FSSAI'] },
+  { emoji:'🫙', name:'Mango Lassi Curd Base', farm:'Sunrise Dairy', dist:'1.5km', price:'₹78', unit:'/500ml', tag:'Seasonal', tagClass:'chip-warning', color:'#fff7ed', certs:['FSSAI'] },
+  { emoji:'🧴', name:'A2 Ghee (Bilona)', farm:'Vedic Farms', dist:'2.8km', price:'₹680', unit:'/500ml', tag:'Premium', tagClass:'chip-primary', color:'#fdf8e1', certs:['Organic','A2'] },
+  { emoji:'🥛', name:'Full Cream Buffalo Milk', farm:'Raju Buffalo Farm', dist:'1.1km', price:'₹80', unit:'/litre', tag:'Full Cream', tagClass:'chip-secondary', color:'#f8f0ff', certs:['FSSAI'] },
+];
+
+const grid = document.getElementById('marketGrid');
+products.forEach((p, i) => {
+  grid.innerHTML += `
+  <div class="mkt-card" data-animate style="animation-delay:${i*0.06}s">
+    <div class="mkt-card-img" style="background:linear-gradient(135deg,${p.color},white);">
+      <span class="mkt-card-img-inner" style="font-size:70px;">${p.emoji}</span>
+      <div class="mkt-card-tag"><span class="chip ${p.tagClass}" style="font-size:11px;">${p.tag}</span></div>
+      <button class="mkt-card-fav" title="Wishlist">♡</button>
+    </div>
+    <div class="mkt-card-body">
+      <div class="mkt-card-farm"><span class="mkt-card-farm-dot"></span>${p.farm} · ${p.dist}</div>
+      <div class="mkt-card-name">${p.name}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:var(--sp-sm);">
+        ${p.certs.map(c=>`<span class="chip chip-surface" style="font-size:11px;padding:2px 8px;">${c}</span>`).join('')}
+      </div>
+      <div class="mkt-card-row">
+        <div><span class="mkt-card-price">${p.price}</span><span class="mkt-card-unit">${p.unit}</span></div>
+        <button class="mkt-add-btn" onclick="showToast('Added to cart! 🥛','success')">+</button>
+      </div>
+    </div>
+  </div>`;
+});
+
+// Filter tabs
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

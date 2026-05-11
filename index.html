@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Is My Milk | Pure. Fresh. Local. Urban Dairy Exchange</title>
+<meta name="description" content="Connecting urban Indian families with 3km local dairies. Premium A2 Cow & Buffalo milk tracked from farm to table. Join 450+ partner farms.">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Where Is My Milk</span>
+        <span class="nav-logo-tagline">Urban Dairy Exchange</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="dairy-map.html" class="nav-link">
+        <span class="material-icons-round">map</span> Dairy Map
+      </a>
+      <a href="marketplace.html" class="nav-link">
+        <span class="material-icons-round">storefront</span> Marketplace
+      </a>
+      <a href="community-hub.html" class="nav-link">
+        <span class="material-icons-round">groups</span> Community Hub
+      </a>
+      <a href="milk-ledger.html" class="nav-link">
+        <span class="material-icons-round">receipt_long</span> Milk Ledger
+      </a>
+    </div>
+    <div class="nav-actions">
+      <a href="buyer-dashboard.html" class="btn btn-ghost btn-sm">Sign In</a>
+      <a href="marketplace.html" class="btn btn-primary btn-sm">Get Fresh Milk</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileMenu">
+  <a href="dairy-map.html" class="nav-link"><span class="material-icons-round">map</span> Dairy Map</a>
+  <a href="marketplace.html" class="nav-link"><span class="material-icons-round">storefront</span> Marketplace</a>
+  <a href="community-hub.html" class="nav-link"><span class="material-icons-round">groups</span> Community Hub</a>
+  <a href="milk-ledger.html" class="nav-link"><span class="material-icons-round">receipt_long</span> Milk Ledger</a>
+  <div class="nav-actions">
+    <a href="buyer-dashboard.html" class="btn btn-outline">Sign In</a>
+    <a href="marketplace.html" class="btn btn-primary">Get Fresh Milk</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="container hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow" data-animate>
+        <span class="hero-eyebrow-dot"></span>
+        <span class="hero-eyebrow-text">Now live across 12 Indian cities</span>
+      </div>
+      <h1 class="hero-title" data-animate>
+        Farm-Fresh Milk,<br>
+        <span class="highlight">Delivered Within</span><br>
+        <span class="highlight-green">3km of You</span>
+      </h1>
+      <p class="hero-desc" data-animate>
+        Connecting urban families with certified local dairies through a smart, transparent ledger system. Premium A2 Cow &amp; Buffalo milk — tracked from milking to your doorstep.
+      </p>
+      <div class="hero-actions" data-animate>
+        <a href="marketplace.html" class="btn btn-primary btn-lg">
+          <span class="material-icons-round">shopping_bag</span> Order Fresh Milk
+        </a>
+        <a href="dairy-map.html" class="btn btn-outline btn-lg">
+          <span class="material-icons-round">explore</span> View Dairy Map
+        </a>
+      </div>
+      <div class="hero-trust" data-animate>
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">✅</div>
+          <span>FSSAI Certified</span>
+        </div>
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">🌿</div>
+          <span>Antibiotic Free</span>
+        </div>
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">📍</div>
+          <span>&lt;3km Sourced</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Visual -->
+    <div class="hero-visual">
+      <div class="hero-mockup">
+        <!-- Float badges -->
+        <div class="float-badge float-badge-top" style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px;">🥛</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--on-surface)">Just milked</div>
+            <div style="font-size:11px;color:var(--secondary-dark);font-weight:600">Delivered by 7 AM ✓</div>
+          </div>
+        </div>
+
+        <div class="hero-mockup-card">
+          <div class="hero-mockup-header">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--on-surface)">🗺 Dairy Map — Bengaluru</div>
+              <div style="font-size:12px;color:var(--on-surface-variant)">14 certified partners nearby</div>
+            </div>
+            <span class="chip chip-success" style="font-size:11px;">
+              <span class="status-dot status-online"></span> Live
+            </span>
+          </div>
+
+          <div class="hero-map-area">
+            <div class="hero-map-grid"></div>
+            <div class="hero-map-marker marker-blue">
+              <span class="hero-map-marker-inner">🐄</span>
+            </div>
+            <div class="hero-map-marker marker-green">
+              <span class="hero-map-marker-inner" style="font-size:12px;">🌿</span>
+            </div>
+            <div class="hero-map-marker marker-blue-sm">
+              <span class="hero-map-marker-inner" style="font-size:11px;">🥛</span>
+            </div>
+            <!-- Roads -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 200" fill="none">
+              <path d="M0 100 Q100 80 200 100 Q300 120 400 100" stroke="rgba(0,86,210,0.15)" stroke-width="3" stroke-dasharray="6 4"/>
+              <path d="M200 0 Q190 50 200 100 Q210 150 200 200" stroke="rgba(40,167,69,0.15)" stroke-width="3" stroke-dasharray="6 4"/>
+            </svg>
+            <!-- 3km radius circle -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 200" fill="none">
+              <circle cx="160" cy="100" r="60" stroke="rgba(0,86,210,0.2)" stroke-width="1.5" stroke-dasharray="4 3" fill="rgba(0,86,210,0.04)"/>
+            </svg>
+          </div>
+
+          <div class="hero-farm-list">
+            <div class="hero-farm-item">
+              <div class="hero-farm-avatar">🐄</div>
+              <div class="hero-farm-info">
+                <div class="hero-farm-name">Krishnamurthy Dairy</div>
+                <div class="hero-farm-dist">📍 1.2km · A2 Gir Cow</div>
+              </div>
+              <div class="hero-farm-price">₹85/L</div>
+            </div>
+            <div class="hero-farm-item">
+              <div class="hero-farm-avatar">🌿</div>
+              <div class="hero-farm-info">
+                <div class="hero-farm-name">Green Pastures Farm</div>
+                <div class="hero-farm-dist">📍 2.4km · Organic Buffalo</div>
+              </div>
+              <div class="hero-farm-price">₹72/L</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="float-badge float-badge-bottom" style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;background:var(--primary-fixed);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;">📦</div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--on-surface)">Order Confirmed!</div>
+            <div style="font-size:11px;color:var(--on-surface-variant)">Arrives by 6:45 AM tomorrow</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header text-center" data-animate>
+      <div class="section-eyebrow" style="justify-content:center;">Our Promise</div>
+      <h2 class="h2">Why Families Choose Milk City</h2>
+      <p class="body-lg text-muted" style="max-width:560px;margin:var(--sp-md) auto 0;">Built on the pillars of transparency, freshness, and community trust — for health-conscious families and local dairy producers alike.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" data-animate>
+        <div class="feature-icon feature-icon-blue">📍</div>
+        <h3 class="feature-title">The 3km Local Promise</h3>
+        <p class="feature-desc">Every drop sourced from certified farms within 3km of your location. Cutting transport emissions while maximizing freshness.</p>
+      </div>
+      <div class="feature-card" data-animate>
+        <div class="feature-icon feature-icon-green">🔍</div>
+        <h3 class="feature-title">Farm-to-Table Traceability</h3>
+        <p class="feature-desc">Scan any bottle to see the farmer's profile, milking time, cold-chain logs, and quality test results in real-time.</p>
+      </div>
+      <div class="feature-card" data-animate>
+        <div class="feature-icon feature-icon-teal">♻️</div>
+        <h3 class="feature-title">Community Redistribution</h3>
+        <p class="feature-desc">Got extra milk? Our ledger connects surplus supply to community kitchens and neighboring hubs — eliminating waste.</p>
+      </div>
+      <div class="feature-card" data-animate>
+        <div class="feature-icon feature-icon-amber">💰</div>
+        <h3 class="feature-title">Fair Farmer Pricing</h3>
+        <p class="feature-desc">Zero middlemen. Producers receive direct payments with 100% payment transparency through our blockchain-verified ledger.</p>
+      </div>
+      <div class="feature-card" data-animate>
+        <div class="feature-icon feature-icon-blue">🚴</div>
+        <h3 class="feature-title">Join the Delivery Fleet</h3>
+        <p class="feature-desc">Our hyper-local delivery partners earn 25% more than industry standard while serving their own neighborhoods.</p>
+      </div>
+      <div class="feature-card" data-animate>
+        <div class="feature-icon feature-icon-green">🌿</div>
+        <h3 class="feature-title">Certified Organic Range</h3>
+        <p class="feature-desc">A2 Gir Cow, Murrah Buffalo, and certified Organic Dahi — all antibiotic-free, non-homogenized, and FSSAI approved.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section product-section" id="products">
+  <div class="container">
+    <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-lg);" data-animate>
+      <div>
+        <div class="section-eyebrow">Our Products</div>
+        <h2 class="h2">Sourced Fresh Daily</h2>
+        <p class="body-lg text-muted">Delivered by 7 AM. Every morning.</p>
+      </div>
+      <a href="marketplace.html" class="btn btn-outline">
+        View all varieties <span class="material-icons-round" style="font-size:18px;">chevron_right</span>
+      </a>
+    </div>
+    <div class="products-grid">
+      <div class="product-card" data-animate>
+        <div class="product-image-well">
+          <div class="product-emoji">🥛</div>
+          <div class="product-tag">
+            <span class="chip chip-primary">A2 Certified</span>
+          </div>
+          <div class="product-glass-overlay">
+            <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;">Add to Order</a>
+          </div>
+        </div>
+        <div class="product-body">
+          <h3 class="product-name">Pure A2 Gir Cow Milk</h3>
+          <p class="product-desc">Non-homogenized, antibiotic-free, rich in protein. The traditional gold standard.</p>
+          <div class="product-meta">
+            <div><span class="product-price">₹85</span><span class="product-unit">/litre</span></div>
+            <div class="product-availability"><span class="status-dot status-online"></span> 14 farms available</div>
+          </div>
+          <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;">Order Now</a>
+        </div>
+      </div>
+
+      <div class="product-card" data-animate>
+        <div class="product-image-well" style="background:linear-gradient(135deg,#fff8e8,#fef3c7);">
+          <div class="product-emoji">🍶</div>
+          <div class="product-tag">
+            <span class="chip chip-secondary">High Fat</span>
+          </div>
+          <div class="product-glass-overlay">
+            <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;">Add to Order</a>
+          </div>
+        </div>
+        <div class="product-body">
+          <h3 class="product-name">Creamy Buffalo Milk</h3>
+          <p class="product-desc">High fat content, perfect for thick curd and traditional chai. From local Murrah breeds.</p>
+          <div class="product-meta">
+            <div><span class="product-price">₹72</span><span class="product-unit">/litre</span></div>
+            <div class="product-availability"><span class="status-dot status-online"></span> 9 farms available</div>
+          </div>
+          <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;">Order Now</a>
+        </div>
+      </div>
+
+      <div class="product-card" data-animate>
+        <div class="product-image-well" style="background:linear-gradient(135deg,#f0fff4,#dcfce7);">
+          <div class="product-emoji">🫙</div>
+          <div class="product-tag">
+            <span class="chip chip-success">Probiotic</span>
+          </div>
+          <div class="product-glass-overlay">
+            <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;">Add to Order</a>
+          </div>
+        </div>
+        <div class="product-body">
+          <h3 class="product-name">Thick Probiotic Dahi</h3>
+          <p class="product-desc">Hand-set in small batches with live cultures. No preservatives or thickeners added.</p>
+          <div class="product-meta">
+            <div><span class="product-price">₹65</span><span class="product-unit">/500g</span></div>
+            <div class="product-availability"><span class="status-dot status-online"></span> 6 dairies nearby</div>
+          </div>
+          <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;">Order Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-header text-center" data-animate>
+      <div class="section-eyebrow" style="justify-content:center;">Simple Process</div>
+      <h2 class="h2">Seamless Farm-to-Table</h2>
+      <p class="body-lg text-muted" style="max-width:500px;margin:var(--sp-md) auto 0;">Three easy steps to get the freshest local dairy delivered to your door every morning.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card" data-animate>
+        <div class="step-number">1</div>
+        <h3 class="step-title">Scan &amp; Verify</h3>
+        <p class="step-desc">Scan the QR code at your local hub or bottle to see real-time quality metrics, farm info, and milking time.</p>
+      </div>
+      <div class="step-card" data-animate>
+        <div class="step-number" style="background:linear-gradient(135deg,var(--secondary),#1aab3e);">2</div>
+        <h3 class="step-title">Order or Subscribe</h3>
+        <p class="step-desc">Choose your milk variety and set your delivery schedule. Manage everything via the Milk City Hub app.</p>
+      </div>
+      <div class="step-card" data-animate>
+        <div class="step-number">3</div>
+        <h3 class="step-title">3km Delivery</h3>
+        <p class="step-desc">Your order is assigned to a neighborhood deliverer and reaches you within hours of milking — by 7 AM.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BANNER -->
+<section class="stats-banner" id="stats">
+  <div class="container">
+    <div class="stats-banner-inner">
+      <div data-animate>
+        <div class="stat-number" data-counter="450" data-suffix="+">450+</div>
+        <div class="stat-desc">Partner Farms Across India</div>
+      </div>
+      <div data-animate>
+        <div class="stat-number" data-prefix="₹" data-counter="12" data-suffix="Cr+">₹12Cr+</div>
+        <div class="stat-desc">Direct Farmer Earnings</div>
+      </div>
+      <div data-animate>
+        <div class="stat-number" data-counter="100" data-suffix="%">100%</div>
+        <div class="stat-desc">Payment Transparency</div>
+      </div>
+      <div data-animate>
+        <div class="stat-number" data-counter="47000" data-suffix="+">47,000+</div>
+        <div class="stat-desc">Happy Households</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER CTA -->
+<section class="section" id="partner">
+  <div class="container">
+    <div class="partner-cta" data-animate>
+      <div class="section-eyebrow" style="justify-content:center;margin-bottom:var(--sp-md);">For Dairy Producers</div>
+      <h2 class="h2" style="margin-bottom:var(--sp-md);">Are You a Local Dairy Farmer?</h2>
+      <p class="body-lg text-muted" style="max-width:520px;margin:0 auto var(--sp-2xl);">Join our network, get fair pricing, and connect directly with your urban neighbors. No middlemen. Direct earnings. Full transparency.</p>
+      <div style="display:flex;gap:var(--sp-md);justify-content:center;flex-wrap:wrap;">
+        <a href="seller-dashboard.html" class="btn btn-primary btn-lg">Join as a Producer</a>
+        <a href="community-hub.html" class="btn btn-outline btn-lg">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">🥛</div>
+          <span class="footer-logo-name">Where Is My Milk</span>
+        </div>
+        <p class="footer-desc">Connecting urban Indian families with local certified dairies. Pure. Fresh. Local. Delivered by 7 AM.</p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social">𝕏</a>
+          <a href="#" class="footer-social">in</a>
+          <a href="#" class="footer-social">f</a>
+          <a href="#" class="footer-social">▶</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading">Product</h4>
+        <ul class="footer-links">
+          <li><a href="marketplace.html" class="footer-link">Marketplace</a></li>
+          <li><a href="dairy-map.html" class="footer-link">Dairy Map</a></li>
+          <li><a href="community-hub.html" class="footer-link">Community Hub</a></li>
+          <li><a href="milk-ledger.html" class="footer-link">Milk Ledger</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading">Company</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">About Us</a></li>
+          <li><a href="#" class="footer-link">Partner Farms</a></li>
+          <li><a href="#" class="footer-link">Quality Standards</a></li>
+          <li><a href="#" class="footer-link">Careers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading">Support</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Contact Support</a></li>
+          <li><a href="#" class="footer-link">Farm Standards</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer-link">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2024 Where Is My Milk India. Pure. Fresh. Local.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

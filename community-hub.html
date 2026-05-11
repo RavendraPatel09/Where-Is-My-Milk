@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community Hub | Where Is My Milk</title>
+<meta name="description" content="Redistribute surplus milk, connect with local dairies, and build a sustainable dairy community.">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<style>
+.page-offset { padding-top: var(--nav-height); }
+.hub-hero {
+  background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--secondary) 60%, #4ade80 100%);
+  padding: var(--sp-4xl) 0;
+  color: #fff; text-align: center; position: relative; overflow: hidden;
+}
+.hub-hero::before {
+  content: '♻️'; position: absolute; font-size: 300px; opacity: 0.06;
+  top: -60px; right: -40px; transform: rotate(20deg);
+}
+.hub-hero h1 { font-size: clamp(2rem,4vw,3rem); font-weight: 800; margin-bottom: var(--sp-md); }
+.hub-hero p { font-size: var(--body-lg); opacity: 0.9; max-width: 560px; margin: 0 auto var(--sp-2xl); }
+.hub-stats {
+  display: flex; gap: var(--sp-3xl); justify-content: center; flex-wrap: wrap;
+  margin-top: var(--sp-2xl);
+}
+.hub-stat { text-align: center; }
+.hub-stat-num { font-size: 2.5rem; font-weight: 800; }
+.hub-stat-label { font-size: var(--body-sm); opacity: 0.8; }
+
+/* Hub body */
+.hub-body {
+  display: grid; grid-template-columns: 1fr 360px;
+  gap: var(--sp-2xl); padding: var(--sp-2xl) 0 var(--sp-5xl);
+  align-items: start;
+}
+.hub-main {}
+
+/* Post feed */
+.post-composer {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant); padding: var(--sp-xl);
+  box-shadow: var(--shadow-sm); margin-bottom: var(--sp-xl);
+}
+.post-input {
+  width: 100%; min-height: 80px; resize: vertical;
+  border: 1.5px solid var(--outline-variant); border-radius: var(--radius-md);
+  padding: var(--sp-md); font-family: var(--font-family); font-size: var(--body-md);
+  color: var(--on-surface); background: var(--surface-low);
+  outline: none; transition: all var(--transition-fast);
+  margin-bottom: var(--sp-md);
+}
+.post-input:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(40,167,69,0.12); background: var(--surface-lowest); }
+.post-actions { display: flex; align-items: center; justify-content: space-between; }
+.post-type-tabs { display: flex; gap: 4px; }
+.post-type-tab {
+  padding: 6px 14px; border-radius: var(--radius-full); border: 1.5px solid var(--outline-variant);
+  background: transparent; font-family: var(--font-family); font-size: 13px; font-weight: 600;
+  color: var(--on-surface-variant); cursor: pointer; transition: all var(--transition-fast);
+}
+.post-type-tab.active { background: var(--secondary); color: #fff; border-color: var(--secondary); }
+
+/* Post card */
+.post-card {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant); padding: var(--sp-xl);
+  box-shadow: var(--shadow-sm); margin-bottom: var(--sp-lg);
+  transition: all var(--transition-slow);
+}
+.post-card:hover { box-shadow: var(--shadow-md); }
+.post-header { display: flex; align-items: center; gap: var(--sp-md); margin-bottom: var(--sp-lg); }
+.post-avatar {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  font-weight: 700; color: #fff;
+}
+.post-meta { flex: 1; }
+.post-name { font-size: var(--body-md); font-weight: 700; }
+.post-time { font-size: 12px; color: var(--on-surface-variant); }
+.post-body { font-size: var(--body-md); color: var(--on-surface); line-height: var(--lh-relaxed); margin-bottom: var(--sp-lg); }
+.post-offer {
+  background: linear-gradient(135deg, rgba(40,167,69,0.06), rgba(40,167,69,0.02));
+  border: 1px solid rgba(40,167,69,0.15); border-radius: var(--radius-lg);
+  padding: var(--sp-lg); margin-bottom: var(--sp-lg);
+}
+.offer-row { display: flex; align-items: center; justify-content: space-between; }
+.offer-qty { font-size: var(--h4-size); font-weight: 800; color: var(--secondary-dark); }
+.offer-price { font-size: var(--body-sm); color: var(--on-surface-variant); }
+.offer-expires { font-size: 12px; color: var(--on-surface-variant); }
+.post-footer { display: flex; align-items: center; gap: var(--sp-md); padding-top: var(--sp-md); border-top: 1px solid var(--outline-variant); }
+.post-action-btn {
+  display: flex; align-items: center; gap: 6px; padding: 6px 14px;
+  border-radius: var(--radius-full); border: none; background: transparent;
+  font-family: var(--font-family); font-size: 13px; font-weight: 600;
+  color: var(--on-surface-variant); cursor: pointer; transition: all var(--transition-fast);
+}
+.post-action-btn:hover { background: var(--surface-container); color: var(--primary); }
+.post-action-btn.claim { background: var(--secondary); color: #fff; }
+.post-action-btn.claim:hover { background: var(--secondary-dark); }
+
+/* Sidebar */
+.hub-sidebar {}
+.sidebar-widget {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant); box-shadow: var(--shadow-sm);
+  margin-bottom: var(--sp-xl); overflow: hidden;
+}
+.widget-header {
+  padding: var(--sp-lg) var(--sp-xl); border-bottom: 1px solid var(--outline-variant);
+  font-size: var(--body-md); font-weight: 700;
+}
+.widget-body { padding: var(--sp-lg) var(--sp-xl); }
+/* Leaderboard */
+.leader-item { display: flex; align-items: center; gap: var(--sp-md); padding: var(--sp-sm) 0; border-bottom: 1px solid var(--outline-variant); }
+.leader-item:last-child { border-bottom: none; }
+.leader-rank { width: 28px; font-size: 16px; font-weight: 800; color: var(--on-surface-variant); text-align: center; }
+.leader-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.leader-info { flex: 1; }
+.leader-name { font-size: var(--body-sm); font-weight: 700; }
+.leader-donated { font-size: 12px; color: var(--on-surface-variant); }
+.leader-litres { font-size: var(--body-sm); font-weight: 800; color: var(--secondary-dark); }
+
+/* Activity timeline */
+.activity-item { display: flex; gap: var(--sp-md); padding: var(--sp-sm) 0; position: relative; }
+.activity-item::before { content: ''; position: absolute; left: 15px; top: 32px; bottom: -8px; width: 1px; background: var(--outline-variant); }
+.activity-item:last-child::before { display: none; }
+.activity-dot { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid var(--surface-lowest); }
+.activity-text { font-size: 13px; color: var(--on-surface); line-height: 1.5; }
+.activity-time { font-size: 11px; color: var(--on-surface-variant); margin-top: 2px; }
+
+@media (max-width: 1024px) { .hub-body { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Where Is My Milk</span>
+        <span class="nav-logo-tagline">Urban Dairy Exchange</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="dairy-map.html" class="nav-link"><span class="material-icons-round">map</span> Dairy Map</a>
+      <a href="marketplace.html" class="nav-link"><span class="material-icons-round">storefront</span> Marketplace</a>
+      <a href="community-hub.html" class="nav-link active"><span class="material-icons-round">groups</span> Community Hub</a>
+      <a href="milk-ledger.html" class="nav-link"><span class="material-icons-round">receipt_long</span> Milk Ledger</a>
+    </div>
+    <div class="nav-actions">
+      <a href="buyer-dashboard.html" class="btn btn-ghost btn-sm">My Account</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileMenu">
+  <a href="dairy-map.html" class="nav-link">Dairy Map</a>
+  <a href="marketplace.html" class="nav-link">Marketplace</a>
+  <a href="community-hub.html" class="nav-link active">Community Hub</a>
+  <a href="milk-ledger.html" class="nav-link">Milk Ledger</a>
+</div>
+
+<div class="page-offset">
+  <!-- Hero -->
+  <div class="hub-hero">
+    <div class="container">
+      <div class="section-eyebrow" style="justify-content:center;color:rgba(255,255,255,0.8);margin-bottom:var(--sp-md);">Community Redistribution</div>
+      <h1>Pure Milk, Powered by Community</h1>
+      <p>Connect surplus dairy with those who need it most. No waste. Fair prices. Local impact.</p>
+      <a href="#compose" class="btn" style="background:#fff;color:var(--secondary-dark);font-weight:700;padding:14px 32px;border-radius:var(--radius-full);box-shadow:var(--shadow-lg);display:inline-flex;align-items:center;gap:8px;">
+        <span class="material-icons-round">add_circle</span> List Surplus Milk
+      </a>
+      <div class="hub-stats">
+        <div class="hub-stat"><div class="hub-stat-num" data-counter="42800" data-suffix="L">42,800L</div><div class="hub-stat-label">Litres Redistributed</div></div>
+        <div class="hub-stat"><div class="hub-stat-num" data-counter="1240">1,240</div><div class="hub-stat-label">Community Members</div></div>
+        <div class="hub-stat"><div class="hub-stat-num" data-counter="98" data-suffix="%">98%</div><div class="hub-stat-label">Waste Reduction</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hub-body">
+      <!-- Main Feed -->
+      <div class="hub-main">
+        <!-- Post Composer -->
+        <div class="post-composer" id="compose" data-animate>
+          <div style="display:flex;gap:var(--sp-md);margin-bottom:var(--sp-md);">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0;">K</div>
+            <div style="flex:1;">
+              <textarea class="post-input" placeholder="List surplus milk, share availability, or announce redistribution…" id="postText"></textarea>
+              <div class="post-actions">
+                <div class="post-type-tabs">
+                  <button class="post-type-tab active">♻️ Surplus</button>
+                  <button class="post-type-tab">📢 Update</button>
+                  <button class="post-type-tab">🤝 Request</button>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="postFeed()">Post</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed -->
+        <div id="feedContainer"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="hub-sidebar">
+        <!-- Leaderboard -->
+        <div class="sidebar-widget" data-animate>
+          <div class="widget-header">🏆 Top Redistributors</div>
+          <div class="widget-body">
+            <div id="leaderboard"></div>
+          </div>
+        </div>
+
+        <!-- Quick Claim -->
+        <div class="sidebar-widget" data-animate>
+          <div class="widget-header">⚡ Available Now</div>
+          <div class="widget-body" id="quickClaim"></div>
+        </div>
+
+        <!-- Activity -->
+        <div class="sidebar-widget" data-animate>
+          <div class="widget-header">📡 Live Activity</div>
+          <div class="widget-body" id="activityFeed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+const posts = [
+  {
+    avatar:'🐄', name:'Krishnamurthy Dairy', bg:'linear-gradient(135deg,var(--primary),#0066f0)',
+    time:'2 mins ago', type:'surplus',
+    body:"We've had an excellent morning yield — 18L surplus A2 Gir Cow milk available for redistribution. Priority to community kitchens and verified households. First come, first served!",
+    qty:'18 Litres A2 Milk', price:'₹60/L (40% off)', expires:'Expires in 2 hours',
+    likes:14, claims:3
+  },
+  {
+    avatar:'🌿', name:'Lakshmi Organic Dairy', bg:'linear-gradient(135deg,var(--secondary),#1aab3e)',
+    time:'18 mins ago', type:'surplus',
+    body:"Probiotic Dahi surplus! We set 30 extra jars this morning. Perfect for community kitchens. Organic certified, made with live cultures. Reach out to claim.",
+    qty:'30 Jars (500g each)', price:'₹45/jar (30% off)', expires:'Expires in 4 hours',
+    likes:28, claims:11
+  },
+  {
+    avatar:'🏘', name:'Indiranagar Kitchen Collective', bg:'linear-gradient(135deg,#f59e0b,#d97706)',
+    time:'45 mins ago', type:'request',
+    body:"🙏 Requesting 10L of buffalo or A2 milk for Sunday community lunch. We serve 80+ families weekly. Can pay community rate. Any farms near 560038?",
+    qty:'Need: 10 Litres', price:'Can pay ₹55–70/L', expires:'Needed by 10 AM',
+    likes:42, claims:0
+  },
+  {
+    avatar:'🏪', name:'Green Pastures Farm', bg:'linear-gradient(135deg,#a3e635,#4ade80)',
+    time:'1 hr ago', type:'update',
+    body:"✅ Update: All 25L from yesterday's redistribution post has been claimed and delivered. Thank you to all 8 community members who participated. We'll have more tomorrow morning!",
+    qty:null, price:null, expires:null,
+    likes:67, claims:0
+  },
+];
+
+const feedEl = document.getElementById('feedContainer');
+posts.forEach((p, i) => {
+  const typeColors = { surplus:'chip-success', request:'chip-primary', update:'chip-surface' };
+  const typeLabels = { surplus:'Surplus Listed', request:'Seeking Milk', update:'Community Update' };
+  feedEl.innerHTML += `
+  <div class="post-card" data-animate style="animation-delay:${i*0.1}s">
+    <div class="post-header">
+      <div class="post-avatar" style="background:${p.bg};">${p.avatar}</div>
+      <div class="post-meta">
+        <div class="post-name">${p.name}</div>
+        <div class="post-time">${p.time}</div>
+      </div>
+      <span class="chip ${typeColors[p.type]}" style="font-size:11px;">${typeLabels[p.type]}</span>
+    </div>
+    <div class="post-body">${p.body}</div>
+    ${p.qty ? `<div class="post-offer">
+      <div class="offer-row">
+        <div><div class="offer-qty">${p.qty}</div><div class="offer-price">${p.price}</div></div>
+        <span class="chip chip-warning" style="font-size:11px;">⏱ ${p.expires}</span>
+      </div>
+    </div>` : ''}
+    <div class="post-footer">
+      <button class="post-action-btn" onclick="this.querySelector('span:last-child').textContent=parseInt(this.querySelector('span:last-child').textContent)+1">❤️ <span>${p.likes}</span></button>
+      <button class="post-action-btn">💬 Comment</button>
+      <button class="post-action-btn">↗ Share</button>
+      ${p.type === 'surplus' ? `<button class="post-action-btn claim" onclick="showToast('Claim submitted! Farm will contact you shortly. 🥛','success');this.textContent='✓ Claimed';this.disabled=true;">Claim Now · ${p.claims} taken</button>` : ''}
+    </div>
+  </div>`;
+});
+
+const leaders = [
+  { rank:'🥇', emoji:'🐄', name:'Krishnamurthy Dairy', donated:'284L donated' },
+  { rank:'🥈', emoji:'🌿', name:'Lakshmi Organic', donated:'196L donated' },
+  { rank:'🥉', emoji:'🍶', name:'Nandi Hills Farm', donated:'148L donated' },
+  { rank:'4', emoji:'🏪', name:'Green Pastures', donated:'112L donated' },
+  { rank:'5', emoji:'🧈', name:'Vedic Farms', donated:'89L donated' },
+];
+const lb = document.getElementById('leaderboard');
+leaders.forEach(l => {
+  lb.innerHTML += `<div class="leader-item">
+    <div class="leader-rank">${l.rank}</div>
+    <div class="leader-avatar" style="background:var(--primary-fixed);">${l.emoji}</div>
+    <div class="leader-info"><div class="leader-name">${l.name}</div><div class="leader-donated">${l.donated}</div></div>
+  </div>`;
+});
+
+const quickClaims = [
+  { emoji:'🥛', name:'A2 Milk · 8L left', dist:'1.2km', price:'₹60/L' },
+  { emoji:'🫙', name:'Dahi · 12 jars left', dist:'1.8km', price:'₹45/jar' },
+  { emoji:'🍶', name:'Buffalo Milk · 5L', dist:'0.9km', price:'₹55/L' },
+];
+const qc = document.getElementById('quickClaim');
+quickClaims.forEach(q => {
+  qc.innerHTML += `<div style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;border-bottom:1px solid var(--outline-variant);">
+    <span style="font-size:24px;">${q.emoji}</span>
+    <div style="flex:1;"><div style="font-size:13px;font-weight:700;">${q.name}</div><div style="font-size:12px;color:var(--on-surface-variant);">📍 ${q.dist}</div></div>
+    <div style="text-align:right;"><div style="font-size:13px;font-weight:800;color:var(--secondary-dark);">${q.price}</div>
+    <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;border-radius:var(--radius-full);margin-top:4px;" onclick="showToast('Claimed! 🥛','success')">Claim</button></div>
+  </div>`;
+});
+
+const activities = [
+  { color:'var(--secondary)', emoji:'♻️', text:'<strong>Nandi Hills</strong> redistributed 12L to 3 households', time:'5 min ago' },
+  { color:'var(--primary)', emoji:'📦', text:'<strong>Vedic Farms</strong> listed 20L surplus A2 milk', time:'12 min ago' },
+  { color:'#f59e0b', emoji:'🤝', text:'<strong>Kitchen Collective</strong> claimed 8L from Krishnamurthy', time:'28 min ago' },
+  { color:'var(--secondary)', emoji:'✅', text:'<strong>Green Pastures</strong> completed redistribution — 0 waste!', time:'1 hr ago' },
+];
+const af = document.getElementById('activityFeed');
+activities.forEach(a => {
+  af.innerHTML += `<div class="activity-item">
+    <div class="activity-dot" style="background:${a.color}20;">${a.emoji}</div>
+    <div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div>
+  </div>`;
+});
+
+document.querySelectorAll('.post-type-tab').forEach(t => {
+  t.addEventListener('click', () => { document.querySelectorAll('.post-type-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); });
+});
+
+function postFeed() {
+  const text = document.getElementById('postText').value.trim();
+  if (!text) { showToast('Please write something first!', 'error'); return; }
+  showToast('Posted to Community Hub! 🎉', 'success');
+  document.getElementById('postText').value = '';
+}
+</script>
+</body>
+</html>

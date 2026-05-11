@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard | Where Is My Milk</title>
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<style>
+body{background:var(--surface-low);}
+/* Dashboard layout */
+.dash-layout{display:flex;min-height:100vh;}
+.dash-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.dash-topbar{height:64px;background:var(--surface-lowest);border-bottom:1px solid var(--outline-variant);display:flex;align-items:center;justify-content:space-between;padding-inline:var(--sp-2xl);flex-shrink:0;position:sticky;top:0;z-index:50;}
+.dash-content{flex:1;padding:var(--sp-2xl);overflow-y:auto;}
+
+/* Welcome banner */
+.welcome-banner{background:linear-gradient(135deg,var(--primary) 0%,#0055d4 50%,var(--secondary) 100%);border-radius:var(--radius-2xl);padding:var(--sp-2xl) var(--sp-3xl);color:#fff;margin-bottom:var(--sp-2xl);position:relative;overflow:hidden;}
+.welcome-banner::before{content:'🥛';font-size:180px;position:absolute;right:-20px;bottom:-40px;opacity:.08;transform:rotate(-15deg);}
+.welcome-name{font-size:clamp(1.4rem,3vw,2rem);font-weight:800;margin-bottom:6px;}
+.welcome-sub{font-size:var(--body-md);opacity:.85;margin-bottom:var(--sp-xl);}
+.welcome-actions{display:flex;gap:var(--sp-md);flex-wrap:wrap;}
+.wb-btn{padding:10px 22px;border-radius:var(--radius-full);font-family:var(--font-family);font-size:var(--body-sm);font-weight:700;cursor:pointer;transition:all var(--transition-fast);border:none;display:flex;align-items:center;gap:6px;}
+.wb-btn-primary{background:#fff;color:var(--primary);box-shadow:var(--shadow-md);}
+.wb-btn-primary:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+.wb-btn-ghost{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.35);}
+.wb-btn-ghost:hover{background:rgba(255,255,255,.28);}
+
+/* Top row */
+.dash-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-lg);margin-bottom:var(--sp-2xl);}
+.dash-card{background:var(--surface-lowest);border-radius:var(--radius-xl);padding:var(--sp-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);}
+.card-label{font-size:var(--body-sm);color:var(--on-surface-variant);font-weight:500;margin-bottom:4px;}
+.card-val{font-size:1.75rem;font-weight:800;color:var(--on-surface);margin-bottom:4px;}
+.card-sub{font-size:12px;color:var(--on-surface-variant);}
+.card-icon{width:44px;height:44px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:var(--sp-md);}
+
+/* Active subscription */
+.sub-card{background:var(--surface-lowest);border-radius:var(--radius-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--sp-2xl);}
+.sub-card-header{padding:var(--sp-xl);border-bottom:1px solid var(--outline-variant);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-md);}
+.sub-body{padding:var(--sp-xl);}
+.sub-items{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-lg);}
+.sub-item{background:var(--surface-low);border-radius:var(--radius-lg);padding:var(--sp-lg);border:1px solid var(--outline-variant);}
+.sub-item-top{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-md);}
+.sub-emoji{font-size:32px;}
+.sub-item-name{font-size:var(--body-md);font-weight:700;}
+.sub-item-sub{font-size:12px;color:var(--on-surface-variant);}
+.sub-item-row{display:flex;align-items:center;justify-content:space-between;margin-top:var(--sp-md);}
+.sub-qty{font-size:var(--body-sm);font-weight:700;color:var(--primary);}
+.sub-price{font-size:var(--body-sm);font-weight:800;color:var(--on-surface);}
+
+/* Delivery tracking */
+.tracking-card{background:var(--surface-lowest);border-radius:var(--radius-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--sp-2xl);}
+.tracking-header{padding:var(--sp-xl);border-bottom:1px solid var(--outline-variant);display:flex;align-items:center;justify-content:space-between;}
+.tracking-body{padding:var(--sp-xl);}
+.tracking-steps{display:flex;flex-direction:column;gap:0;}
+.tracking-step{display:flex;gap:var(--sp-lg);align-items:flex-start;position:relative;padding-bottom:var(--sp-xl);}
+.tracking-step:last-child{padding-bottom:0;}
+.tracking-step::before{content:'';position:absolute;left:19px;top:40px;bottom:0;width:2px;background:var(--outline-variant);}
+.tracking-step:last-child::before{display:none;}
+.tracking-step.done::before{background:var(--secondary);}
+.step-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid var(--outline-variant);background:var(--surface-lowest);}
+.step-dot.done{background:var(--secondary);border-color:var(--secondary);}
+.step-dot.active{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 4px rgba(0,86,210,.15);}
+.step-info{flex:1;padding-top:6px;}
+.step-title{font-size:var(--body-md);font-weight:700;color:var(--on-surface);margin-bottom:2px;}
+.step-title.done{color:var(--secondary-dark);}
+.step-sub{font-size:12px;color:var(--on-surface-variant);}
+.step-time{font-size:11px;font-weight:700;color:var(--on-surface-variant);margin-left:auto;white-space:nowrap;}
+
+/* QR verify */
+.qr-section{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2xl);margin-bottom:var(--sp-2xl);}
+.qr-card{background:var(--surface-lowest);border-radius:var(--radius-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);padding:var(--sp-xl);}
+.qr-box{width:140px;height:140px;margin:var(--sp-xl) auto;background:var(--surface-low);border-radius:var(--radius-xl);display:flex;align-items:center;justify-content:center;font-size:70px;border:2px dashed var(--outline-variant);}
+
+/* Order history */
+.orders-card{background:var(--surface-lowest);border-radius:var(--radius-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--sp-2xl);}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--on-surface-variant);padding:12px var(--sp-xl);text-align:left;background:var(--surface-low);border-bottom:1px solid var(--outline-variant);}
+.data-table td{padding:12px var(--sp-xl);font-size:var(--body-sm);border-bottom:1px solid var(--outline-variant);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--surface-low);}
+
+/* Countdown */
+.countdown{display:flex;gap:var(--sp-md);justify-content:center;margin:var(--sp-xl) 0;}
+.countdown-block{text-align:center;background:var(--surface-low);border-radius:var(--radius-lg);padding:var(--sp-md) var(--sp-xl);border:1px solid var(--outline-variant);}
+.countdown-num{font-size:2rem;font-weight:800;color:var(--primary);line-height:1;}
+.countdown-label{font-size:11px;color:var(--on-surface-variant);font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
+
+@media(max-width:1024px){.sidebar{display:none;}.dash-grid-3{grid-template-columns:repeat(2,1fr);}.sub-items{grid-template-columns:repeat(2,1fr);}.qr-section{grid-template-columns:1fr;}}
+@media(max-width:600px){.dash-grid-3{grid-template-columns:1fr;}.sub-items{grid-template-columns:1fr;}.welcome-banner{padding:var(--sp-xl);}}
+</style>
+</head>
+<body>
+
+<div class="dash-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon"></div>
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">Where Is My Milk</span>
+          <span class="nav-logo-tagline">My Account</span>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="sidebar-section-label">My Account</span>
+      <a href="buyer-dashboard.html" class="sidebar-link active"><span class="material-icons-round">home</span> My Dashboard</a>
+      <a href="marketplace.html" class="sidebar-link"><span class="material-icons-round">storefront</span> Order More</a>
+      <a href="milk-ledger.html" class="sidebar-link"><span class="material-icons-round">receipt_long</span> Order History</a>
+      <a href="#" class="sidebar-link"><span class="material-icons-round">subscriptions</span> My Subscription</a>
+      <a href="#" class="sidebar-link"><span class="material-icons-round">qr_code_scanner</span> Scan &amp; Verify</a>
+      <span class="sidebar-section-label">Explore</span>
+      <a href="dairy-map.html" class="sidebar-link"><span class="material-icons-round">map</span> Dairy Map</a>
+      <a href="community-hub.html" class="sidebar-link"><span class="material-icons-round">groups</span> Community Hub</a>
+      <a href="#" class="sidebar-link"><span class="material-icons-round">favorite</span> Saved Farms</a>
+      <span class="sidebar-section-label">Settings</span>
+      <a href="#" class="sidebar-link"><span class="material-icons-round">person</span> Profile</a>
+      <a href="#" class="sidebar-link"><span class="material-icons-round">notifications</span> Notifications</a>
+      <a href="#" class="sidebar-link"><span class="material-icons-round">help_outline</span> Help</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="display:flex;align-items:center;gap:var(--sp-sm);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0;">P</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;">Priya Sharma</div>
+          <div style="font-size:11px;color:var(--on-surface-variant);">Indiranagar, Bengaluru</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <span style="font-size:18px;font-weight:700;">My Dashboard</span>
+        <span style="font-size:12px;color:var(--on-surface-variant);margin-left:12px;">Sunday, May 11, 2026</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--sp-md);">
+        <button class="btn btn-ghost btn-sm" style="position:relative;">
+          <span class="material-icons-round" style="font-size:20px;">notifications_none</span>
+          <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--primary);border-radius:50%;border:2px solid var(--surface-lowest);"></span>
+        </button>
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">P</div>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner" data-animate>
+        <div class="welcome-name">Good morning, Priya 👋</div>
+        <div class="welcome-sub">Your A2 Cow Milk is on its way — arriving by 6:50 AM today. On a 142-day streak! 🔥</div>
+        <div class="welcome-actions">
+          <a href="marketplace.html" class="wb-btn wb-btn-primary"><span class="material-icons-round" style="font-size:16px;">add_shopping_cart</span> Order Extra</a>
+          <a href="dairy-map.html" class="wb-btn wb-btn-ghost"><span class="material-icons-round" style="font-size:16px;">map</span> Find Farms</a>
+          <a href="community-hub.html" class="wb-btn wb-btn-ghost"><span class="material-icons-round" style="font-size:16px;">groups</span> Community</a>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="dash-grid-3" data-animate>
+        <div class="dash-card">
+          <div class="card-icon" style="background:var(--primary-fixed);">🥛</div>
+          <div class="card-label">Total Litres Ordered</div>
+          <div class="card-val">284<span style="font-size:1rem;font-weight:600;color:var(--on-surface-variant);">L</span></div>
+          <div class="card-sub">Since joining · Jan 2026</div>
+        </div>
+        <div class="dash-card">
+          <div class="card-icon" style="background:rgba(40,167,69,.1);">🌿</div>
+          <div class="card-label">Farms Supported</div>
+          <div class="card-val">6</div>
+          <div class="card-sub">Certified local farms</div>
+        </div>
+        <div class="dash-card">
+          <div class="card-icon" style="background:#fff8e8;">💰</div>
+          <div class="card-label">Total Spent</div>
+          <div class="card-val">₹22.4K</div>
+          <div class="card-sub">Avg ₹78.9/litre · Great deal!</div>
+        </div>
+      </div>
+
+      <!-- Next Delivery Countdown -->
+      <div class="sub-card" data-animate>
+        <div class="sub-card-header">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;">⏰ Next Delivery Countdown</h3>
+            <p style="font-size:13px;color:var(--on-surface-variant);">Tomorrow Morning — Monday, May 12</p>
+          </div>
+          <span class="chip chip-success"><span class="status-dot status-online"></span> On schedule</span>
+        </div>
+        <div class="sub-body" style="text-align:center;">
+          <p style="font-size:var(--body-md);color:var(--on-surface-variant);margin-bottom:var(--sp-lg);">Your Krishnamurthy Dairy order arrives in:</p>
+          <div class="countdown" id="countdown">
+            <div class="countdown-block"><div class="countdown-num" id="cdHr">08</div><div class="countdown-label">Hours</div></div>
+            <div class="countdown-block"><div class="countdown-num" id="cdMin">24</div><div class="countdown-label">Mins</div></div>
+            <div class="countdown-block"><div class="countdown-num" id="cdSec">00</div><div class="countdown-label">Secs</div></div>
+          </div>
+          <p style="font-size:13px;color:var(--on-surface-variant);">📍 Delivery by <strong>Ravi Kumar</strong> (⭐ 4.9) · Your regular delivery partner</p>
+        </div>
+      </div>
+
+      <!-- Active Subscription -->
+      <div class="sub-card" data-animate>
+        <div class="sub-card-header">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;">📦 Active Subscription</h3>
+            <p style="font-size:13px;color:var(--on-surface-variant);">Daily delivery · Renews June 1, 2026</p>
+          </div>
+          <div style="display:flex;gap:var(--sp-sm);">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Subscription paused for tomorrow.','success')">Pause Day</button>
+            <a href="marketplace.html" class="btn btn-primary btn-sm">Modify</a>
+          </div>
+        </div>
+        <div class="sub-body">
+          <div class="sub-items">
+            <div class="sub-item">
+              <div class="sub-item-top"><span class="sub-emoji">🥛</span><div><div class="sub-item-name">A2 Gir Cow Milk</div><div class="sub-item-sub">Krishnamurthy Dairy · 1.2km</div></div></div>
+              <div class="sub-item-row"><span class="sub-qty">2 litres/day</span><span class="sub-price">₹170/day</span></div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-item-top"><span class="sub-emoji">🫙</span><div><div class="sub-item-name">Probiotic Dahi</div><div class="sub-item-sub">Lakshmi Organic · 1.8km</div></div></div>
+              <div class="sub-item-row"><span class="sub-qty">500g · Alt days</span><span class="sub-price">₹65/order</span></div>
+            </div>
+            <div class="sub-item" style="border:1.5px dashed var(--outline-variant);background:transparent;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;cursor:pointer;" onclick="window.location='marketplace.html'">
+              <span style="font-size:32px;">➕</span>
+              <span style="font-size:13px;font-weight:600;color:var(--on-surface-variant);">Add Product</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Tracking + QR -->
+      <div class="qr-section" data-animate>
+        <!-- Delivery Tracking -->
+        <div class="tracking-card">
+          <div class="tracking-header">
+            <div>
+              <h3 style="font-size:16px;font-weight:700;">🚴 Today's Delivery</h3>
+              <p style="font-size:13px;color:var(--on-surface-variant);">Order #MK-2847 · Delivered ✓</p>
+            </div>
+            <span class="badge badge-success">Delivered</span>
+          </div>
+          <div class="tracking-body">
+            <div class="tracking-steps">
+              <div class="tracking-step done">
+                <div class="step-dot done">✓</div>
+                <div class="step-info"><div class="step-title done">Milk Freshly Milked</div><div class="step-sub">Krishnamurthy Farm · A2 Gir Cow</div></div>
+                <span class="step-time">4:30 AM</span>
+              </div>
+              <div class="tracking-step done">
+                <div class="step-dot done">✓</div>
+                <div class="step-info"><div class="step-title done">Quality Checked &amp; Packed</div><div class="step-sub">Fat: 5.2% · SNF: 8.7% · FSSAI pass</div></div>
+                <span class="step-time">5:15 AM</span>
+              </div>
+              <div class="tracking-step done">
+                <div class="step-dot done">✓</div>
+                <div class="step-info"><div class="step-title done">Picked up by Ravi Kumar</div><div class="step-sub">Your neighbourhood delivery partner</div></div>
+                <span class="step-time">6:00 AM</span>
+              </div>
+              <div class="tracking-step">
+                <div class="step-dot active">📍</div>
+                <div class="step-info"><div class="step-title" style="color:var(--primary);">Delivered to Doorstep</div><div class="step-sub">Left at door · Signed by resident</div></div>
+                <span class="step-time">6:48 AM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Verify -->
+        <div class="qr-card">
+          <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">🔍 Scan &amp; Verify</h3>
+          <p style="font-size:13px;color:var(--on-surface-variant);">Scan your bottle QR to see farm origin, milking time, and quality metrics.</p>
+          <div class="qr-box">📷</div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:var(--sp-md);" onclick="showToast('Opening camera for QR scan...','success')">
+            <span class="material-icons-round" style="font-size:18px;">qr_code_scanner</span> Scan Bottle QR
+          </button>
+          <!-- Last verified -->
+          <div style="background:var(--surface-low);border-radius:var(--radius-lg);padding:var(--sp-md);border:1px solid var(--outline-variant);">
+            <div style="font-size:12px;font-weight:700;color:var(--on-surface-variant);margin-bottom:var(--sp-sm);">LAST SCANNED</div>
+            <div style="display:flex;align-items:center;gap:var(--sp-sm);">
+              <span style="font-size:24px;">🥛</span>
+              <div>
+                <div style="font-size:13px;font-weight:700;">A2 Gir Cow Milk · 2L</div>
+                <div style="font-size:12px;color:var(--on-surface-variant);">Milked 4:30 AM · Fat 5.2% ✓</div>
+              </div>
+              <span class="badge badge-success" style="margin-left:auto;">Verified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order History Table -->
+      <div class="orders-card" data-animate>
+        <div style="padding:var(--sp-xl);border-bottom:1px solid var(--outline-variant);display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;">Order History</h3>
+            <p style="font-size:13px;color:var(--on-surface-variant);">Last 30 days</p>
+          </div>
+          <a href="milk-ledger.html" class="btn btn-ghost btn-sm">Full Ledger →</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr>
+              <th>Order ID</th><th>Product</th><th>Farm</th><th>Qty</th><th>Amount</th><th>Status</th><th>Date</th>
+            </tr></thead>
+            <tbody id="orderHistory"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+// Countdown timer
+function updateCountdown() {
+  const now = new Date();
+  const delivery = new Date(now);
+  delivery.setDate(delivery.getDate() + (delivery.getHours() < 7 ? 0 : 1));
+  delivery.setHours(7, 0, 0, 0);
+  const diff = delivery - now;
+  if (diff <= 0) { document.getElementById('cdHr').textContent='00'; document.getElementById('cdMin').textContent='00'; document.getElementById('cdSec').textContent='00'; return; }
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+  document.getElementById('cdHr').textContent = String(h).padStart(2,'0');
+  document.getElementById('cdMin').textContent = String(m).padStart(2,'0');
+  document.getElementById('cdSec').textContent = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// Order history
+const orders = [
+  { id:'#MK-2847', product:'A2 Gir Cow Milk', farm:'Krishnamurthy Dairy', qty:'2L', amount:'₹170', status:'Delivered', date:'11 May' },
+  { id:'#MK-2844', product:'Probiotic Dahi', farm:'Lakshmi Organic', qty:'500g', amount:'₹65', status:'Delivered', date:'10 May' },
+  { id:'#MK-2840', product:'A2 Gir Cow Milk', farm:'Krishnamurthy Dairy', qty:'2L', amount:'₹170', status:'Delivered', date:'10 May' },
+  { id:'#MK-2836', product:'A2 Gir Cow Milk', farm:'Krishnamurthy Dairy', qty:'2L', amount:'₹170', status:'Delivered', date:'09 May' },
+  { id:'#MK-2830', product:'Buffalo Milk', farm:'Nandi Hills Farm', qty:'1L', amount:'₹72', status:'Delivered', date:'08 May' },
+];
+const tbody = document.getElementById('orderHistory');
+orders.forEach(o => {
+  tbody.innerHTML += `<tr>
+    <td style="font-weight:700;color:var(--primary);font-size:12px;">${o.id}</td>
+    <td>${o.product}</td>
+    <td style="color:var(--on-surface-variant);">${o.farm}</td>
+    <td style="font-weight:600;">${o.qty}</td>
+    <td style="font-weight:800;">${o.amount}</td>
+    <td><span class="badge badge-success">${o.status}</span></td>
+    <td style="color:var(--on-surface-variant);font-size:12px;">${o.date}</td>
+  </tr>`;
+});
+</script>
+</body>
+</html>

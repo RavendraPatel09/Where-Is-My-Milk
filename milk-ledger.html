@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milk Ledger | Where Is My Milk</title>
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<style>
+.page-offset{padding-top:var(--nav-height);}
+.ledger-hero{background:linear-gradient(135deg,var(--primary) 0%,#0033a0 100%);padding:var(--sp-3xl) 0;color:#fff;}
+.ledger-hero h1{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;margin-bottom:8px;}
+.ledger-hero p{font-size:var(--body-lg);opacity:.85;max-width:520px;}
+.ledger-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-lg);margin-top:var(--sp-2xl);}
+.lkpi{background:rgba(255,255,255,.12);border-radius:var(--radius-xl);padding:var(--sp-xl);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px);}
+.lkpi-val{font-size:2rem;font-weight:800;color:#fff;}
+.lkpi-label{font-size:var(--body-sm);color:rgba(255,255,255,.75);margin-top:4px;}
+.lkpi-change{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
+
+/* Ledger Body */
+.ledger-body{display:grid;grid-template-columns:1fr 300px;gap:var(--sp-2xl);padding:var(--sp-2xl) 0 var(--sp-5xl);align-items:start;}
+.ledger-main{}
+
+/* Tabs */
+.ledger-tabs{display:flex;gap:4px;background:var(--surface-container);border-radius:var(--radius-full);padding:4px;margin-bottom:var(--sp-xl);width:fit-content;}
+.ledger-tab{padding:8px 20px;border-radius:var(--radius-full);border:none;font-family:var(--font-family);font-size:var(--body-sm);font-weight:600;color:var(--on-surface-variant);cursor:pointer;background:transparent;transition:all var(--transition-fast);}
+.ledger-tab.active{background:var(--surface-lowest);color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* Toolbar */
+.ledger-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-xl);flex-wrap:wrap;gap:var(--sp-md);}
+.toolbar-filters{display:flex;gap:var(--sp-sm);align-items:center;flex-wrap:wrap;}
+.filter-pill{padding:7px 16px;border-radius:var(--radius-full);border:1.5px solid var(--outline-variant);background:var(--surface-lowest);font-family:var(--font-family);font-size:13px;font-weight:600;color:var(--on-surface-variant);cursor:pointer;transition:all var(--transition-fast);}
+.filter-pill:hover,.filter-pill.active{border-color:var(--primary);color:var(--primary);background:var(--primary-fixed);}
+.search-inline{display:flex;align-items:center;gap:8px;background:var(--surface-lowest);border:1.5px solid var(--outline-variant);border-radius:var(--radius-full);padding:8px 16px;transition:all var(--transition-fast);}
+.search-inline:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,86,210,.1);}
+.search-inline input{border:none;outline:none;font-family:var(--font-family);font-size:13px;color:var(--on-surface);background:transparent;width:160px;}
+
+/* Table Card */
+.table-card{background:var(--surface-lowest);border-radius:var(--radius-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:var(--sp-xl);}
+.table-card-header{padding:var(--sp-xl);border-bottom:1px solid var(--outline-variant);display:flex;align-items:center;justify-content:space-between;}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--on-surface-variant);padding:var(--sp-md) var(--sp-xl);text-align:left;background:var(--surface-low);border-bottom:1px solid var(--outline-variant);white-space:nowrap;}
+.data-table td{padding:14px var(--sp-xl);font-size:var(--body-sm);color:var(--on-surface);border-bottom:1px solid var(--outline-variant);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--surface-low);}
+.tx-id{font-weight:700;color:var(--primary);font-size:12px;font-family:monospace;}
+.tx-farm{display:flex;align-items:center;gap:8px;}
+.tx-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.tx-farm-name{font-weight:600;}
+.tx-farm-sub{font-size:11px;color:var(--on-surface-variant);}
+.tx-amount-pos{font-weight:800;color:var(--secondary-dark);}
+.tx-amount-neg{font-weight:800;color:var(--on-surface);}
+.tx-action{display:flex;gap:6px;}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-lg) var(--sp-xl);border-top:1px solid var(--outline-variant);}
+.page-info{font-size:var(--body-sm);color:var(--on-surface-variant);}
+.page-btns{display:flex;gap:4px;}
+.page-btn{width:36px;height:36px;border-radius:var(--radius-md);border:1.5px solid var(--outline-variant);background:var(--surface-lowest);font-family:var(--font-family);font-size:var(--body-sm);font-weight:600;color:var(--on-surface-variant);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition-fast);}
+.page-btn:hover,.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+/* Sidebar */
+.ledger-sidebar{}
+.ledger-widget{background:var(--surface-lowest);border-radius:var(--radius-xl);border:1px solid var(--outline-variant);box-shadow:var(--shadow-sm);margin-bottom:var(--sp-xl);overflow:hidden;}
+.widget-head{padding:var(--sp-lg) var(--sp-xl);border-bottom:1px solid var(--outline-variant);font-size:var(--body-md);font-weight:700;}
+.widget-body{padding:var(--sp-lg) var(--sp-xl);}
+
+/* Donut chart */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;padding:var(--sp-lg) 0;}
+.donut-legend{width:100%;margin-top:var(--sp-lg);}
+.legend-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:13px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;margin-right:8px;flex-shrink:0;}
+
+/* Summary cards */
+.summary-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--outline-variant);font-size:var(--body-sm);}
+.summary-item:last-child{border-bottom:none;}
+.summary-label{color:var(--on-surface-variant);}
+.summary-value{font-weight:700;color:var(--on-surface);}
+.summary-value.primary{color:var(--primary);}
+.summary-value.green{color:var(--secondary-dark);}
+
+@media(max-width:1024px){.ledger-body{grid-template-columns:1fr;}.ledger-kpis{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.ledger-kpis{grid-template-columns:1fr 1fr;}.data-table td:nth-child(3),.data-table th:nth-child(3){display:none;}.ledger-toolbar{flex-direction:column;align-items:flex-start;}}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Where Is My Milk</span>
+        <span class="nav-logo-tagline">Urban Dairy Exchange</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="dairy-map.html" class="nav-link"><span class="material-icons-round">map</span> Dairy Map</a>
+      <a href="marketplace.html" class="nav-link"><span class="material-icons-round">storefront</span> Marketplace</a>
+      <a href="community-hub.html" class="nav-link"><span class="material-icons-round">groups</span> Community Hub</a>
+      <a href="milk-ledger.html" class="nav-link active"><span class="material-icons-round">receipt_long</span> Milk Ledger</a>
+    </div>
+    <div class="nav-actions">
+      <a href="buyer-dashboard.html" class="btn btn-ghost btn-sm">My Account</a>
+      <a href="seller-dashboard.html" class="btn btn-primary btn-sm">Seller Portal</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileMenu">
+  <a href="dairy-map.html" class="nav-link">Dairy Map</a>
+  <a href="marketplace.html" class="nav-link">Marketplace</a>
+  <a href="community-hub.html" class="nav-link">Community Hub</a>
+  <a href="milk-ledger.html" class="nav-link active">Milk Ledger</a>
+</div>
+
+<div class="page-offset">
+  <!-- Hero -->
+  <div class="ledger-hero">
+    <div class="container">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-xl);">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:var(--radius-full);padding:5px 14px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.9);margin-bottom:var(--sp-md);">
+            <span class="material-icons-round" style="font-size:14px;">verified</span> Blockchain-Verified Ledger
+          </div>
+          <h1>Milk Ledger — India</h1>
+          <p>Complete transaction history, surplus redistribution records, and farmer payment logs — all immutably tracked.</p>
+        </div>
+        <div style="display:flex;gap:var(--sp-sm);">
+          <button class="btn btn-ghost" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="showToast('Exporting ledger as CSV...','success')">
+            <span class="material-icons-round" style="font-size:18px;">download</span> Export CSV
+          </button>
+          <button class="btn" style="background:#fff;color:var(--primary);font-weight:700;">
+            <span class="material-icons-round" style="font-size:18px;">add</span> New Entry
+          </button>
+        </div>
+      </div>
+      <div class="ledger-kpis">
+        <div class="lkpi" data-animate>
+          <div class="lkpi-val">₹8.4L</div>
+          <div class="lkpi-label">Total Transactions (May)</div>
+          <div class="lkpi-change">↑ 12% vs April</div>
+        </div>
+        <div class="lkpi" data-animate>
+          <div class="lkpi-val">42,800L</div>
+          <div class="lkpi-label">Litres Redistributed</div>
+          <div class="lkpi-change">↑ 23% community growth</div>
+        </div>
+        <div class="lkpi" data-animate>
+          <div class="lkpi-val">247</div>
+          <div class="lkpi-label">Active Transactions</div>
+          <div class="lkpi-change">↑ 18 new today</div>
+        </div>
+        <div class="lkpi" data-animate>
+          <div class="lkpi-val">100%</div>
+          <div class="lkpi-label">Payment Transparency</div>
+          <div class="lkpi-change">0 disputes this month</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="ledger-body">
+      <!-- Main -->
+      <div class="ledger-main">
+        <!-- Tabs -->
+        <div class="ledger-tabs">
+          <button class="ledger-tab active" onclick="switchTab(this,'all')">All Transactions</button>
+          <button class="ledger-tab" onclick="switchTab(this,'purchase')">Purchases</button>
+          <button class="ledger-tab" onclick="switchTab(this,'redistribution')">Redistributions</button>
+          <button class="ledger-tab" onclick="switchTab(this,'payments')">Payments</button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="ledger-toolbar">
+          <div class="toolbar-filters">
+            <div class="search-inline">
+              <span class="material-icons-round" style="color:var(--outline);font-size:18px;">search</span>
+              <input type="text" placeholder="Search transactions…" oninput="filterTable(this.value)">
+            </div>
+            <select class="filter-pill" style="padding:7px 16px;">
+              <option>All Farms</option>
+              <option>Krishnamurthy Dairy</option>
+              <option>Lakshmi Organic</option>
+              <option>Nandi Hills</option>
+            </select>
+            <select class="filter-pill" style="padding:7px 16px;">
+              <option>May 2026</option>
+              <option>April 2026</option>
+              <option>March 2026</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:var(--sp-sm);">
+            <button class="filter-pill active" onclick="toggleBtn(this)">📥 Received</button>
+            <button class="filter-pill" onclick="toggleBtn(this)">📤 Sent</button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card" data-animate>
+          <div class="table-card-header">
+            <div>
+              <span style="font-size:var(--body-md);font-weight:700;">Transaction History</span>
+              <span style="font-size:12px;color:var(--on-surface-variant);margin-left:8px;">247 entries</span>
+            </div>
+            <span class="chip chip-success"><span class="status-dot status-online"></span> Live sync</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="ledgerTable">
+              <thead>
+                <tr>
+                  <th>TX ID</th>
+                  <th>Farm / Party</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ledgerBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <span class="page-info">Showing 1–15 of 247 entries</span>
+            <div class="page-btns">
+              <button class="page-btn">‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="ledger-sidebar">
+        <!-- Donut breakdown -->
+        <div class="ledger-widget" data-animate>
+          <div class="widget-head">📊 Volume Breakdown</div>
+          <div class="widget-body">
+            <div class="donut-wrap">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="52" fill="none" stroke="var(--surface-container)" stroke-width="18"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="var(--primary)" stroke-width="18"
+                  stroke-dasharray="164 163" stroke-dashoffset="-41" stroke-linecap="round"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="var(--secondary)" stroke-width="18"
+                  stroke-dasharray="98 229" stroke-dashoffset="122" stroke-linecap="round"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#f59e0b" stroke-width="18"
+                  stroke-dasharray="65 262" stroke-dashoffset="220" stroke-linecap="round"/>
+                <text x="70" y="65" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="22" font-weight="800" fill="var(--on-surface)">42.8K</text>
+                <text x="70" y="82" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="10" fill="var(--on-surface-variant)">Litres Total</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-row"><div style="display:flex;align-items:center;"><div class="legend-dot" style="background:var(--primary);"></div>A2 Cow Milk</div><strong>50%</strong></div>
+                <div class="legend-row"><div style="display:flex;align-items:center;"><div class="legend-dot" style="background:var(--secondary);"></div>Buffalo Milk</div><strong>30%</strong></div>
+                <div class="legend-row"><div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#f59e0b;"></div>Dahi &amp; Others</div><strong>20%</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly summary -->
+        <div class="ledger-widget" data-animate>
+          <div class="widget-head">📋 May 2026 Summary</div>
+          <div class="widget-body">
+            <div class="summary-item"><span class="summary-label">Total Purchased</span><span class="summary-value primary">₹5.2L</span></div>
+            <div class="summary-item"><span class="summary-label">Redistributed</span><span class="summary-value green">₹1.8L</span></div>
+            <div class="summary-item"><span class="summary-label">Farmer Payouts</span><span class="summary-value green">₹7.1L</span></div>
+            <div class="summary-item"><span class="summary-label">Pending Settlements</span><span class="summary-value" style="color:var(--warning);">₹24,000</span></div>
+            <div class="summary-item"><span class="summary-label">Avg. ₹ per Litre</span><span class="summary-value">₹73.40</span></div>
+            <div class="summary-item"><span class="summary-label">Waste Eliminated</span><span class="summary-value green">1,240L</span></div>
+            <div style="margin-top:var(--sp-lg);">
+              <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="showToast('Full report generated!','success')">
+                <span class="material-icons-round" style="font-size:18px;">picture_as_pdf</span> Download Report
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent farms -->
+        <div class="ledger-widget" data-animate>
+          <div class="widget-head">🏆 Top Farms by Volume</div>
+          <div class="widget-body" id="topFarms"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+const rows = [
+  { id:'MK-0284', farm:'Krishnamurthy Dairy', emoji:'🐄', sub:'A2 Gir Cow', product:'A2 Full Cream', qty:'50L', amount:'₹4,250', type:'Purchase', status:'Settled', date:'11 May' },
+  { id:'MK-0283', farm:'Lakshmi Organic', emoji:'🌿', sub:'Organic', product:'Probiotic Dahi', qty:'30 jars', amount:'₹1,950', type:'Purchase', status:'Settled', date:'11 May' },
+  { id:'MK-0282', farm:'Community Kitchen', emoji:'🏘', sub:'Redistribution', product:'A2 Milk (surplus)', qty:'18L', amount:'₹1,080', type:'Redistribution', status:'Complete', date:'10 May' },
+  { id:'MK-0281', farm:'Nandi Hills Farm', emoji:'🍶', sub:'Buffalo', product:'Buffalo Milk', qty:'40L', amount:'₹2,880', type:'Purchase', status:'Settled', date:'10 May' },
+  { id:'MK-0280', farm:'Green Pastures', emoji:'🌱', sub:'Organic', product:'White Butter', qty:'10kg', amount:'₹6,000', type:'Purchase', status:'Pending', date:'10 May' },
+  { id:'MK-0279', farm:'Vedic Farms', emoji:'🧈', sub:'Bilona', product:'A2 Ghee', qty:'5L', amount:'₹3,400', type:'Purchase', status:'Settled', date:'09 May' },
+  { id:'MK-0278', farm:'Sunrise Dairy', emoji:'☀️', sub:'Toned', product:'Toned Milk', qty:'100L', amount:'₹5,500', type:'Purchase', status:'Settled', date:'09 May' },
+  { id:'MK-0277', farm:'Raju Buffalo Farm', emoji:'🐃', sub:'Buffalo', product:'Full Cream Buffalo', qty:'20L', amount:'₹1,600', type:'Purchase', status:'Settled', date:'08 May' },
+  { id:'MK-0276', farm:'NGO Akshaya', emoji:'🤲', sub:'Donation', product:'A2 Milk (donated)', qty:'25L', amount:'₹0', type:'Donation', status:'Complete', date:'08 May' },
+  { id:'MK-0275', farm:'Krishnamurthy Dairy', emoji:'🐄', sub:'A2 Gir Cow', product:'A2 Full Cream', qty:'60L', amount:'₹5,100', type:'Purchase', status:'Settled', date:'07 May' },
+];
+
+const statusMap = { Settled:'badge-success', Complete:'badge-primary', Pending:'badge-warning', Failed:'badge-error' };
+const typeMap = { Purchase:'chip-primary', Redistribution:'chip-secondary', Donation:'chip-surface' };
+
+const body = document.getElementById('ledgerBody');
+function renderRows(data) {
+  body.innerHTML = '';
+  data.forEach(r => {
+    body.innerHTML += `<tr>
+      <td class="tx-id">${r.id}</td>
+      <td><div class="tx-farm">
+        <div class="tx-avatar" style="background:var(--primary-fixed);">${r.emoji}</div>
+        <div><div class="tx-farm-name">${r.farm}</div><div class="tx-farm-sub">${r.sub}</div></div>
+      </div></td>
+      <td>${r.product}</td>
+      <td style="font-weight:600;">${r.qty}</td>
+      <td class="${r.amount==='₹0'?'tx-amount-neg':'tx-amount-pos'}">${r.amount}</td>
+      <td><span class="chip ${typeMap[r.type]}" style="font-size:11px;">${r.type}</span></td>
+      <td><span class="badge ${statusMap[r.status]}">${r.status}</span></td>
+      <td style="color:var(--on-surface-variant);font-size:12px;">${r.date}</td>
+      <td><button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:12px;" onclick="showToast('Opening transaction ${r.id}...','success')">View</button></td>
+    </tr>`;
+  });
+}
+renderRows(rows);
+
+function filterTable(q) {
+  const filtered = rows.filter(r => Object.values(r).join(' ').toLowerCase().includes(q.toLowerCase()));
+  renderRows(filtered);
+}
+
+function switchTab(el, tab) {
+  document.querySelectorAll('.ledger-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = tab === 'all' ? rows : rows.filter(r => r.type.toLowerCase() === tab || (tab==='purchase' && r.type==='Purchase') || (tab==='redistribution' && (r.type==='Redistribution'||r.type==='Donation')) || (tab==='payments' && r.status==='Pending'));
+  renderRows(filtered.length ? filtered : rows);
+}
+
+function toggleBtn(el) { el.classList.toggle('active'); }
+
+const farms = [
+  { emoji:'🐄', name:'Krishnamurthy Dairy', vol:'1,840L', pct:72 },
+  { emoji:'🌿', name:'Lakshmi Organic', vol:'980L', pct:48 },
+  { emoji:'🍶', name:'Nandi Hills Farm', vol:'760L', pct:37 },
+  { emoji:'🧈', name:'Vedic Farms', vol:'420L', pct:20 },
+];
+const tf = document.getElementById('topFarms');
+farms.forEach(f => {
+  tf.innerHTML += `<div style="margin-bottom:var(--sp-md);">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="font-size:20px;">${f.emoji}</span>
+      <span style="font-size:13px;font-weight:700;flex:1;">${f.name}</span>
+      <span style="font-size:13px;font-weight:800;color:var(--primary);">${f.vol}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" data-width="${f.pct}" style="width:0%;transition:width .8s ease-out;"></div></div>
+  </div>`;
+});
+
+document.querySelectorAll('.page-btn').forEach(b => {
+  b.addEventListener('click', function() { document.querySelectorAll('.page-btn').forEach(x=>x.classList.remove('active')); this.classList.add('active'); });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dairy Map | Where Is My Milk</title>
+<meta name="description" content="Interactive map of certified local dairy farms near you. Find fresh milk within 3km.">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<style>
+.page-offset { padding-top: var(--nav-height); }
+.map-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: calc(100vh - var(--nav-height));
+}
+/* Sidebar */
+.map-sidebar {
+  background: var(--surface-lowest);
+  border-right: 1px solid var(--outline-variant);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.map-sidebar-header {
+  padding: var(--sp-xl);
+  border-bottom: 1px solid var(--outline-variant);
+  background: linear-gradient(135deg, var(--surface-low), var(--primary-fixed));
+}
+.map-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface-lowest); border: 1.5px solid var(--outline-variant);
+  border-radius: var(--radius-full); padding: 9px 16px;
+  margin-top: var(--sp-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+.map-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,86,210,0.1); }
+.map-search input { flex:1; border:none; outline:none; font-family:var(--font-family); font-size:var(--body-sm); color:var(--on-surface); background:transparent; }
+.farm-list { flex: 1; overflow-y: auto; padding: var(--sp-md); display: flex; flex-direction: column; gap: var(--sp-sm); }
+.farm-card {
+  border-radius: var(--radius-lg); padding: var(--sp-md);
+  background: var(--surface-lowest); border: 1.5px solid var(--outline-variant);
+  cursor: pointer; transition: all var(--transition-fast);
+}
+.farm-card:hover, .farm-card.selected {
+  border-color: var(--primary); background: var(--primary-fixed);
+  box-shadow: var(--shadow-md);
+}
+.farm-card-top { display: flex; align-items: flex-start; gap: var(--sp-sm); margin-bottom: var(--sp-sm); }
+.farm-avatar {
+  width: 44px; height: 44px; border-radius: var(--radius-md); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.farm-info { flex: 1; }
+.farm-name { font-size: var(--body-sm); font-weight: var(--fw-bold); color: var(--on-surface); margin-bottom: 2px; }
+.farm-sub { font-size: 12px; color: var(--on-surface-variant); }
+.farm-dist-badge {
+  font-size: 11px; font-weight: var(--fw-bold); padding: 3px 8px;
+  border-radius: var(--radius-full); background: var(--surface-container); color: var(--on-surface-variant);
+  white-space: nowrap;
+}
+.farm-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.farm-stats { display: flex; gap: var(--sp-md); }
+.farm-stat { font-size: 12px; color: var(--on-surface-variant); }
+.farm-stat strong { color: var(--on-surface); font-weight: var(--fw-bold); }
+
+/* Map Area */
+.map-area {
+  position: relative; overflow: hidden;
+  background: linear-gradient(160deg, #e8f4f8 0%, #d4e8f0 60%, #c8e0ea 100%);
+}
+.map-canvas { width: 100%; height: 100%; }
+.map-overlay-top {
+  position: absolute; top: var(--sp-xl); left: var(--sp-xl); right: var(--sp-xl);
+  display: flex; gap: var(--sp-md); align-items: center; justify-content: flex-end;
+  pointer-events: none;
+}
+.map-control-group {
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--surface-lowest); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md); border: 1px solid var(--outline-variant);
+  pointer-events: all; overflow: hidden;
+}
+.map-btn {
+  width: 36px; height: 36px; border: none; background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 18px; font-weight: 700; color: var(--on-surface-variant);
+  transition: all var(--transition-fast); border-bottom: 1px solid var(--outline-variant);
+}
+.map-btn:last-child { border-bottom: none; }
+.map-btn:hover { background: var(--surface-low); color: var(--primary); }
+.map-legend {
+  position: absolute; bottom: var(--sp-xl); left: var(--sp-xl);
+  background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border); border-radius: var(--radius-xl);
+  padding: var(--sp-md) var(--sp-lg); box-shadow: var(--shadow-lg);
+}
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: var(--fw-semibold); color: var(--on-surface); margin-bottom: 6px; }
+.legend-item:last-child { margin-bottom: 0; }
+.legend-dot { width: 14px; height: 14px; border-radius: 50%; }
+/* Farm Popup */
+.farm-popup {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -70%);
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  padding: var(--sp-xl); box-shadow: var(--shadow-float);
+  border: 1px solid var(--outline-variant); width: 280px;
+  animation: scaleIn 0.2s ease-out;
+  z-index: 10;
+}
+.popup-close {
+  position: absolute; top: var(--sp-sm); right: var(--sp-sm);
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface-container); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--on-surface-variant);
+}
+@keyframes scaleIn { from { opacity: 0; transform: translate(-50%,-70%) scale(0.9); } to { opacity:1; transform:translate(-50%,-70%) scale(1); } }
+
+/* Map SVG Road styles */
+.road { stroke: rgba(255,255,255,0.6); stroke-width: 4; fill: none; stroke-linecap: round; }
+.road-major { stroke: rgba(255,255,255,0.8); stroke-width: 6; }
+.grid-line { stroke: rgba(0,86,210,0.05); stroke-width: 1; }
+.park { fill: rgba(40,167,69,0.12); }
+.water { fill: rgba(0,86,210,0.1); }
+.building { fill: rgba(0,64,161,0.06); }
+/* Markers */
+.marker-label { font-size: 10px; font-family: 'Plus Jakarta Sans', sans-serif; fill: #fff; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .map-layout { grid-template-columns: 1fr; grid-template-rows: 280px 1fr; height: auto; }
+  .map-sidebar { height: 280px; border-right: none; border-bottom: 1px solid var(--outline-variant); }
+  .farm-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; }
+  .farm-card { min-width: 240px; flex-shrink: 0; }
+  .map-area { height: calc(100vh - var(--nav-height) - 280px); min-height: 400px; }
+}
+</style>
+</head>
+<body>
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Where Is My Milk</span>
+        <span class="nav-logo-tagline">Urban Dairy Exchange</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="dairy-map.html" class="nav-link active"><span class="material-icons-round">map</span> Dairy Map</a>
+      <a href="marketplace.html" class="nav-link"><span class="material-icons-round">storefront</span> Marketplace</a>
+      <a href="community-hub.html" class="nav-link"><span class="material-icons-round">groups</span> Community Hub</a>
+      <a href="milk-ledger.html" class="nav-link"><span class="material-icons-round">receipt_long</span> Milk Ledger</a>
+    </div>
+    <div class="nav-actions">
+      <a href="buyer-dashboard.html" class="btn btn-ghost btn-sm">My Account</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileMenu">
+  <a href="dairy-map.html" class="nav-link active">Dairy Map</a>
+  <a href="marketplace.html" class="nav-link">Marketplace</a>
+  <a href="community-hub.html" class="nav-link">Community Hub</a>
+  <a href="milk-ledger.html" class="nav-link">Milk Ledger</a>
+</div>
+
+<div class="page-offset">
+  <div class="map-layout">
+    <!-- Sidebar -->
+    <div class="map-sidebar">
+      <div class="map-sidebar-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <h2 class="h3" style="font-size:18px;">Dairy Map</h2>
+          <span class="chip chip-success"><span class="status-dot status-online"></span> 14 live</span>
+        </div>
+        <p class="body-sm text-muted">Bengaluru · Showing farms within 3km</p>
+        <div class="map-search">
+          <span class="material-icons-round" style="color:var(--outline);font-size:18px;">search</span>
+          <input type="text" placeholder="Search farms or localities…">
+        </div>
+      </div>
+
+      <div class="farm-list" id="farmList">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Map Area -->
+    <div class="map-area" id="mapArea">
+      <!-- SVG Map Canvas -->
+      <svg class="map-canvas" viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" id="mapSvg">
+        <!-- Background grid -->
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,86,210,0.05)" stroke-width="1"/>
+          </pattern>
+          <filter id="shadow">
+            <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,64,161,0.2)"/>
+          </filter>
+        </defs>
+        <rect width="900" height="700" fill="url(#grid)"/>
+
+        <!-- Parks -->
+        <ellipse cx="200" cy="200" rx="80" ry="50" class="park"/>
+        <ellipse cx="700" cy="450" rx="60" ry="40" class="park"/>
+
+        <!-- Water -->
+        <ellipse cx="550" cy="150" rx="50" ry="30" class="water"/>
+
+        <!-- Buildings -->
+        <rect x="100" y="300" width="60" height="40" class="building" rx="4"/>
+        <rect x="300" y="200" width="80" height="50" class="building" rx="4"/>
+        <rect x="600" y="300" width="70" height="45" class="building" rx="4"/>
+        <rect x="750" y="200" width="50" height="35" class="building" rx="4"/>
+
+        <!-- Major Roads -->
+        <line x1="0" y1="350" x2="900" y2="350" class="road road-major"/>
+        <line x1="450" y1="0" x2="450" y2="700" class="road road-major"/>
+        <!-- Minor roads -->
+        <line x1="0" y1="180" x2="900" y2="180" class="road"/>
+        <line x1="0" y1="520" x2="900" y2="520" class="road"/>
+        <line x1="220" y1="0" x2="220" y2="700" class="road"/>
+        <line x1="680" y1="0" x2="680" y2="700" class="road"/>
+
+        <!-- 3km radius circle around center -->
+        <circle cx="450" cy="350" r="180" fill="rgba(0,86,210,0.03)" stroke="rgba(0,86,210,0.15)" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <!-- You are here marker -->
+        <circle cx="450" cy="350" r="10" fill="var(--primary)" filter="url(#shadow)" class="animate-pulse-glow"/>
+        <circle cx="450" cy="350" r="5" fill="white"/>
+        <text x="460" y="340" font-family="Plus Jakarta Sans" font-size="11" fill="var(--primary)" font-weight="700">You</text>
+
+        <!-- Farm Markers - Blue (regular) -->
+        <!-- Farm 1: Krishnamurthy 1.2km -->
+        <g class="farm-marker" data-id="0" style="cursor:pointer;" onclick="selectFarm(0, evt)">
+          <path d="M340 290 Q340 260 360 260 Q380 260 380 290 L360 315 Z" fill="var(--primary)" filter="url(#shadow)"/>
+          <circle cx="360" cy="275" r="12" fill="white"/>
+          <text x="360" y="280" class="marker-label" fill="var(--primary)" text-anchor="middle">🐄</text>
+        </g>
+        <!-- Farm 2: Nandi Hills 2.4km -->
+        <g class="farm-marker" data-id="1" style="cursor:pointer;" onclick="selectFarm(1, event)">
+          <path d="M600 200 Q600 170 620 170 Q640 170 640 200 L620 225 Z" fill="var(--primary)" filter="url(#shadow)"/>
+          <circle cx="620" cy="185" r="12" fill="white"/>
+          <text x="620" y="190" class="marker-label" fill="var(--primary)" text-anchor="middle">🍶</text>
+        </g>
+        <!-- Farm 3: Lakshmi (Organic) Green -->
+        <g class="farm-marker" data-id="2" style="cursor:pointer;" onclick="selectFarm(2, event)">
+          <path d="M290 420 Q290 390 310 390 Q330 390 330 420 L310 445 Z" fill="#28A745" filter="url(#shadow)"/>
+          <circle cx="310" cy="405" r="12" fill="white"/>
+          <text x="310" y="410" class="marker-label" fill="#28A745" text-anchor="middle">🌿</text>
+        </g>
+        <!-- Farm 4: City Dairy -->
+        <g class="farm-marker" data-id="3" style="cursor:pointer;" onclick="selectFarm(3, event)">
+          <path d="M530 480 Q530 450 550 450 Q570 450 570 480 L550 505 Z" fill="var(--primary)" filter="url(#shadow)"/>
+          <circle cx="550" cy="465" r="12" fill="white"/>
+          <text x="550" y="470" class="marker-label" fill="var(--primary)" text-anchor="middle">🥛</text>
+        </g>
+        <!-- Farm 5: Vedic (Organic) -->
+        <g class="farm-marker" data-id="4" style="cursor:pointer;" onclick="selectFarm(4, event)">
+          <path d="M700 310 Q700 280 720 280 Q740 280 740 310 L720 335 Z" fill="#28A745" filter="url(#shadow)"/>
+          <circle cx="720" cy="295" r="12" fill="white"/>
+          <text x="720" y="300" class="marker-label" fill="#28A745" text-anchor="middle">🧈</text>
+        </g>
+      </svg>
+
+      <!-- Map Controls -->
+      <div class="map-overlay-top">
+        <div style="display:flex;gap:var(--sp-sm);">
+          <button class="btn btn-ghost btn-sm" style="pointer-events:all;border-radius:var(--radius-full);">
+            <span class="material-icons-round" style="font-size:16px;">my_location</span> My Location
+          </button>
+          <button class="btn btn-ghost btn-sm" style="pointer-events:all;border-radius:var(--radius-full);" onclick="toggleRadius()">
+            <span class="material-icons-round" style="font-size:16px;">radio_button_unchecked</span> 3km Radius
+          </button>
+        </div>
+        <div class="map-control-group" style="pointer-events:all;">
+          <button class="map-btn">+</button>
+          <button class="map-btn">−</button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="map-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--primary);"></div> Certified Dairy</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--secondary);"></div> Organic Partner</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--primary);border:2px solid white;box-shadow:0 0 0 2px var(--primary);"></div> You Are Here</div>
+      </div>
+
+      <!-- Farm Popup (hidden by default) -->
+      <div class="farm-popup" id="farmPopup" style="display:none;">
+        <button class="popup-close" onclick="document.getElementById('farmPopup').style.display='none'">✕</button>
+        <div id="popupContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+const farms = [
+  { emoji:'🐄', name:'Krishnamurthy Dairy', type:'A2 Gir Cow', dist:'1.2km', price:'₹85/L', rating:'4.9', reviews:'127', certs:['FSSAI','A2'], stock:'12L available', bg:'var(--primary-fixed)', color:'var(--primary)' },
+  { emoji:'🍶', name:'Nandi Hills Farm', type:'Buffalo Milk', dist:'2.4km', price:'₹72/L', rating:'4.7', reviews:'89', certs:['FSSAI'], stock:'8L available', bg:'#fff8e8', color:'var(--primary)' },
+  { emoji:'🌿', name:'Lakshmi Organic Dairy', type:'A2 Organic', dist:'1.8km', price:'₹95/L', rating:'5.0', reviews:'203', certs:['Organic','FSSAI','A2'], stock:'6L available', bg:'#f0fff4', color:'var(--secondary)' },
+  { emoji:'🥛', name:'City Dairy Hub', type:'Toned Milk', dist:'2.9km', price:'₹55/L', rating:'4.5', reviews:'66', certs:['FSSAI'], stock:'20L available', bg:'var(--primary-fixed)', color:'var(--primary)' },
+  { emoji:'🧈', name:'Vedic Farms', type:'A2 Ghee & Milk', dist:'2.6km', price:'₹680/500ml', rating:'4.8', reviews:'154', certs:['Organic','A2'], stock:'Ghee in stock', bg:'#fdf8e1', color:'var(--secondary)' },
+];
+
+const farmList = document.getElementById('farmList');
+farms.forEach((f, i) => {
+  const el = document.createElement('div');
+  el.className = 'farm-card';
+  el.dataset.id = i;
+  el.innerHTML = `
+    <div class="farm-card-top">
+      <div class="farm-avatar" style="background:${f.bg};">${f.emoji}</div>
+      <div class="farm-info">
+        <div class="farm-name">${f.name}</div>
+        <div class="farm-sub">${f.type}</div>
+      </div>
+      <span class="farm-dist-badge">📍 ${f.dist}</span>
+    </div>
+    <div class="farm-tags">
+      ${f.certs.map(c => `<span class="chip ${c==='Organic'?'chip-secondary':'chip-primary'}" style="font-size:11px;">${c}</span>`).join('')}
+    </div>
+    <div class="farm-stats">
+      <span class="farm-stat">⭐ <strong>${f.rating}</strong> (${f.reviews})</span>
+      <span class="farm-stat">🥛 <strong>${f.stock}</strong></span>
+      <span class="farm-stat" style="margin-left:auto;color:var(--primary);font-weight:700;">${f.price}</span>
+    </div>`;
+  el.onclick = () => selectFarm(i, null, el);
+  farmList.appendChild(el);
+});
+
+function selectFarm(id, event, cardEl) {
+  document.querySelectorAll('.farm-card').forEach(c => c.classList.remove('selected'));
+  if (cardEl) cardEl.classList.add('selected');
+  else {
+    const card = document.querySelector(`.farm-card[data-id="${id}"]`);
+    if (card) { card.classList.add('selected'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  }
+  const f = farms[id];
+  document.getElementById('popupContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-md);">
+      <div style="font-size:36px;">${f.emoji}</div>
+      <div><div style="font-weight:700;font-size:15px;">${f.name}</div><div style="font-size:12px;color:var(--on-surface-variant);">${f.type} · ${f.dist}</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:var(--sp-md);flex-wrap:wrap;">
+      ${f.certs.map(c=>`<span class="chip ${c==='Organic'?'chip-secondary':'chip-primary'}" style="font-size:11px;">${c}</span>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--sp-lg);">
+      <span style="font-size:13px;color:var(--on-surface-variant);">⭐ ${f.rating} · ${f.stock}</span>
+      <strong style="color:var(--primary);">${f.price}</strong>
+    </div>
+    <a href="marketplace.html" class="btn btn-primary" style="width:100%;justify-content:center;font-size:14px;">Order from this Farm</a>`;
+  document.getElementById('farmPopup').style.display = 'block';
+}
+
+function toggleRadius() {
+  const circle = document.querySelector('circle[r="180"]');
+  if (circle) {
+    circle.style.opacity = circle.style.opacity === '0' ? '1' : '0';
+    circle.style.transition = 'opacity 0.3s';
+  }
+}
+</script>
+</body>
+</html>

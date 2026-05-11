@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Command Center | Where Is My Milk</title>
+<meta name="description" content="Manage your dairy farm listings, orders, and earnings on the Where Is My Milk seller dashboard.">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/nav.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--surface-low); font-family: var(--font-family); color: var(--on-surface); }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-lg); margin-bottom: var(--sp-2xl); }
+.kpi-card {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  padding: var(--sp-xl); border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-sm); transition: all var(--transition-slow);
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.kpi-icon {
+  width: 48px; height: 48px; border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  margin-bottom: var(--sp-md);
+}
+.kpi-label { font-size: var(--body-sm); color: var(--on-surface-variant); font-weight: var(--fw-medium); margin-bottom: 4px; }
+.kpi-value { font-size: 1.875rem; font-weight: var(--fw-extrabold); color: var(--on-surface); margin-bottom: 4px; }
+.kpi-change { font-size: 12px; font-weight: var(--fw-semibold); display: flex; align-items: center; gap: 4px; }
+.kpi-up { color: var(--secondary-dark); }
+.kpi-down { color: var(--error); }
+
+/* Chart */
+.chart-card {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant); box-shadow: var(--shadow-sm);
+  overflow: hidden; margin-bottom: var(--sp-2xl);
+}
+.chart-header {
+  padding: var(--sp-xl) var(--sp-xl) 0;
+  display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-md);
+}
+.chart-tabs { display: flex; gap: 4px; }
+.chart-tab {
+  padding: 6px 14px; border-radius: var(--radius-full);
+  font-size: 13px; font-weight: var(--fw-semibold);
+  color: var(--on-surface-variant); cursor: pointer; border: none;
+  background: transparent; transition: all var(--transition-fast);
+}
+.chart-tab.active { background: var(--primary); color: #fff; }
+.chart-body { padding: var(--sp-xl); }
+.chart-svg { width: 100%; height: 200px; }
+
+/* Orders table */
+.table-card {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant); box-shadow: var(--shadow-sm);
+  overflow: hidden; margin-bottom: var(--sp-2xl);
+}
+.table-header {
+  padding: var(--sp-xl);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--outline-variant);
+}
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--on-surface-variant);
+  padding: var(--sp-md) var(--sp-xl); text-align: left;
+  background: var(--surface-low); border-bottom: 1px solid var(--outline-variant);
+}
+.data-table td {
+  padding: var(--sp-md) var(--sp-xl); font-size: var(--body-sm);
+  color: var(--on-surface); border-bottom: 1px solid var(--outline-variant);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--surface-low); }
+.order-id { font-weight: var(--fw-bold); color: var(--primary); }
+.amount { font-weight: var(--fw-bold); color: var(--on-surface); }
+
+/* Product listings */
+.listing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-lg); }
+.listing-card {
+  background: var(--surface-lowest); border-radius: var(--radius-xl);
+  border: 1px solid var(--outline-variant); box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.listing-img { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 60px; }
+.listing-body { padding: var(--sp-lg); }
+.listing-name { font-size: var(--body-md); font-weight: var(--fw-bold); margin-bottom: 4px; }
+.listing-sub { font-size: var(--body-sm); color: var(--on-surface-variant); margin-bottom: var(--sp-md); }
+.listing-actions { display: flex; gap: var(--sp-sm); }
+
+/* Quick actions */
+.quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-md); margin-bottom: var(--sp-2xl); }
+.qa-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: var(--sp-lg); background: var(--surface-lowest);
+  border-radius: var(--radius-xl); border: 1.5px solid var(--outline-variant);
+  cursor: pointer; text-decoration: none; color: var(--on-surface);
+  font-size: var(--body-sm); font-weight: var(--fw-semibold);
+  transition: all var(--transition-fast); text-align: center;
+}
+.qa-btn:hover { border-color: var(--primary); background: var(--primary-fixed); color: var(--primary); }
+.qa-icon { font-size: 28px; }
+
+@media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .listing-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .sidebar { display: none; } .kpi-grid { grid-template-columns: 1fr 1fr; } .quick-actions { grid-template-columns: repeat(2, 1fr); } .listing-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .kpi-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon"></div>
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">Where Is My Milk</span>
+          <span class="nav-logo-tagline">Seller Portal</span>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="sidebar-section-label">Main</span>
+      <a href="seller-dashboard.html" class="sidebar-link active">
+        <span class="material-icons-round">dashboard</span> Command Center
+      </a>
+      <a href="milk-ledger.html" class="sidebar-link">
+        <span class="material-icons-round">receipt_long</span> Milk Ledger
+        <span class="badge badge-primary" style="margin-left:auto;">3</span>
+      </a>
+      <a href="dairy-map.html" class="sidebar-link">
+        <span class="material-icons-round">map</span> Dairy Map
+      </a>
+      <a href="marketplace.html" class="sidebar-link">
+        <span class="material-icons-round">storefront</span> Marketplace
+      </a>
+      <span class="sidebar-section-label">Farm Management</span>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">inventory_2</span> My Listings
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">local_shipping</span> Deliveries
+        <span class="badge badge-warning" style="margin-left:auto;">5</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">bar_chart</span> Analytics
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">payments</span> Earnings
+      </a>
+      <span class="sidebar-section-label">Community</span>
+      <a href="community-hub.html" class="sidebar-link">
+        <span class="material-icons-round">groups</span> Community Hub
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">campaign</span> Announcements
+      </a>
+      <span class="sidebar-section-label">Account</span>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">settings</span> Farm Settings
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="material-icons-round">help_outline</span> Help &amp; Support
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="display:flex;align-items:center;gap:var(--sp-sm);">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0;">K</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;">Krishnamurthy Farm</div>
+          <div style="font-size:11px;color:var(--on-surface-variant);">Indiranagar · Verified ✓</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="dashboard-main">
+    <div class="dashboard-topbar">
+      <div>
+        <h1 style="font-size:18px;font-weight:700;">Command Center</h1>
+        <p style="font-size:12px;color:var(--on-surface-variant);">Good morning, Krishnamurthy 👋 — Sunday, May 10, 2026</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--sp-md);">
+        <button class="btn btn-ghost btn-sm">
+          <span class="material-icons-round" style="font-size:18px;">notifications</span>
+          <span class="badge badge-primary" style="margin-left:-4px;margin-top:-8px;">7</span>
+        </button>
+        <a href="marketplace.html" class="btn btn-primary btn-sm">+ List New Product</a>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card" data-animate>
+          <div class="kpi-icon" style="background:var(--primary-fixed);">💰</div>
+          <div class="kpi-label">Revenue This Month</div>
+          <div class="kpi-value">₹1.24L</div>
+          <div class="kpi-change kpi-up">▲ 14.2% vs last month</div>
+        </div>
+        <div class="kpi-card" data-animate>
+          <div class="kpi-icon" style="background:rgba(40,167,69,0.1);">🥛</div>
+          <div class="kpi-label">Litres Sold</div>
+          <div class="kpi-value">1,840</div>
+          <div class="kpi-change kpi-up">▲ 8.5% vs last month</div>
+        </div>
+        <div class="kpi-card" data-animate>
+          <div class="kpi-icon" style="background:#fff8e8;">🛒</div>
+          <div class="kpi-label">Active Buyers</div>
+          <div class="kpi-value">247</div>
+          <div class="kpi-change kpi-up">▲ 23 new this week</div>
+        </div>
+        <div class="kpi-card" data-animate>
+          <div class="kpi-icon" style="background:rgba(245,158,11,0.1);">📦</div>
+          <div class="kpi-label">Pending Orders</div>
+          <div class="kpi-value">18</div>
+          <div class="kpi-change" style="color:var(--warning);">⏳ 5 urgent</div>
+        </div>
+      </div>
+
+      <!-- Revenue Chart -->
+      <div class="chart-card" data-animate>
+        <div class="chart-header">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">Revenue Overview</h3>
+            <p style="font-size:13px;color:var(--on-surface-variant);">Daily earnings — last 30 days</p>
+          </div>
+          <div class="chart-tabs">
+            <button class="chart-tab active">30D</button>
+            <button class="chart-tab">3M</button>
+            <button class="chart-tab">12M</button>
+          </div>
+        </div>
+        <div class="chart-body">
+          <svg class="chart-svg" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(0,86,210,0.18)"/>
+                <stop offset="100%" stop-color="rgba(0,86,210,0)"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="50" x2="800" y2="50" stroke="var(--outline-variant)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="100" x2="800" y2="100" stroke="var(--outline-variant)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="150" x2="800" y2="150" stroke="var(--outline-variant)" stroke-width="1" stroke-dasharray="4 4"/>
+            <!-- Labels -->
+            <text x="0" y="48" font-size="10" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans">₹6000</text>
+            <text x="0" y="98" font-size="10" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans">₹4000</text>
+            <text x="0" y="148" font-size="10" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans">₹2000</text>
+            <!-- Area fill -->
+            <path d="M40 140 L80 120 L120 130 L160 90 L200 100 L240 80 L280 70 L320 85 L360 60 L400 75 L440 55 L480 65 L520 50 L560 60 L600 45 L640 55 L680 40 L720 50 L760 35 L760 200 L40 200 Z" fill="url(#chartGrad)"/>
+            <!-- Line -->
+            <path d="M40 140 L80 120 L120 130 L160 90 L200 100 L240 80 L280 70 L320 85 L360 60 L400 75 L440 55 L480 65 L520 50 L560 60 L600 45 L640 55 L680 40 L720 50 L760 35" stroke="var(--primary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Points -->
+            <circle cx="760" cy="35" r="5" fill="var(--primary)"/>
+            <circle cx="760" cy="35" r="9" fill="rgba(0,86,210,0.2)"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions" data-animate>
+        <a href="#" class="qa-btn"><span class="qa-icon">📋</span>New Listing</a>
+        <a href="milk-ledger.html" class="qa-btn"><span class="qa-icon">📊</span>View Ledger</a>
+        <a href="community-hub.html" class="qa-btn"><span class="qa-icon">♻️</span>List Surplus</a>
+        <a href="dairy-map.html" class="qa-btn"><span class="qa-icon">📍</span>Update Location</a>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="table-card" data-animate>
+        <div class="table-header">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;">Recent Orders</h3>
+            <p style="font-size:13px;color:var(--on-surface-variant);">Last 24 hours</p>
+          </div>
+          <a href="milk-ledger.html" class="btn btn-ghost btn-sm">View all →</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Product Listings -->
+      <div data-animate>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-xl);">
+          <h3 style="font-size:16px;font-weight:700;">My Listings</h3>
+          <a href="#" class="btn btn-primary btn-sm">+ Add Product</a>
+        </div>
+        <div class="listing-grid" id="listingGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+const orders = [
+  { id:'#MK-2847', customer:'Priya S.', product:'A2 Gir Cow Milk', qty:'2L', amount:'₹170', status:'Delivered', time:'6:30 AM' },
+  { id:'#MK-2846', customer:'Rahul M.', product:'A2 Gir Cow Milk', qty:'1L', amount:'₹85', status:'Delivered', time:'6:45 AM' },
+  { id:'#MK-2845', customer:'Anjali K.', product:'Probiotic Dahi', qty:'500g', amount:'₹65', status:'In Transit', time:'7:00 AM' },
+  { id:'#MK-2844', customer:'Suresh P.', product:'A2 Gir Cow Milk', qty:'3L', amount:'₹255', status:'Preparing', time:'7:15 AM' },
+  { id:'#MK-2843', customer:'Meena R.', product:'Full Cream Milk', qty:'1L', amount:'₹90', status:'Pending', time:'7:30 AM' },
+];
+
+const statusColors = { 'Delivered':'badge-success', 'In Transit':'badge-primary', 'Preparing':'badge-warning', 'Pending':'badge-neutral' };
+const tbody = document.getElementById('ordersBody');
+orders.forEach(o => {
+  tbody.innerHTML += `<tr>
+    <td class="order-id">${o.id}</td>
+    <td>${o.customer}</td>
+    <td>${o.product}</td>
+    <td>${o.qty}</td>
+    <td class="amount">${o.amount}</td>
+    <td><span class="badge ${statusColors[o.status]}">${o.status}</span></td>
+    <td style="color:var(--on-surface-variant);">${o.time}</td>
+  </tr>`;
+});
+
+const listings = [
+  { emoji:'🥛', name:'A2 Gir Cow Milk', price:'₹85/L', stock:'Available', color:'var(--primary-fixed)', status:'active' },
+  { emoji:'🫙', name:'Thick Probiotic Dahi', price:'₹65/500g', stock:'12 jars left', color:'#f0fff4', status:'active' },
+  { emoji:'🧈', name:'White Butter (Unsalted)', price:'₹120/200g', stock:'Low Stock', color:'#fffbeb', status:'low' },
+];
+
+const lg = document.getElementById('listingGrid');
+listings.forEach(l => {
+  lg.innerHTML += `<div class="listing-card">
+    <div class="listing-img" style="background:linear-gradient(135deg,${l.color},white);">${l.emoji}</div>
+    <div class="listing-body">
+      <div class="listing-name">${l.name}</div>
+      <div class="listing-sub">${l.price} · ${l.stock}</div>
+      <div class="listing-actions">
+        <button class="btn btn-outline btn-sm" style="flex:1;">Edit</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1;">Pause</button>
+      </div>
+    </div>
+  </div>`;
+});
+
+document.querySelectorAll('.chart-tab').forEach(t => {
+  t.addEventListener('click', () => { document.querySelectorAll('.chart-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); });
+});
+</script>
+</body>
+</html>
