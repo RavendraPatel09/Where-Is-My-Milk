@@ -1,14 +1,6 @@
-/* ============================================================
-   WHERE IS MY MILK — Design System
-   Extracted from Urban Dairy Exchange Stitch Project
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
 
-/* ─────────────────────────────────────────
-   DESIGN TOKENS
-   ───────────────────────────────────────── */
 :root {
   /* Primary — Safety Blue */
   --primary: #0056D2;
@@ -66,14 +58,22 @@
 
   /* ─── Typography ─── */
   --font-family: 'Plus Jakarta Sans', sans-serif;
-  --h1-size: 3rem;        /* 48px */
-  --h2-size: 2rem;        /* 32px */
-  --h3-size: 1.5rem;      /* 24px */
-  --h4-size: 1.25rem;     /* 20px */
-  --body-lg: 1.125rem;    /* 18px */
-  --body-md: 1rem;        /* 16px */
-  --body-sm: 0.875rem;    /* 14px */
-  --label-sm: 0.75rem;    /* 12px */
+  --h1-size: 3rem;
+  /* 48px */
+  --h2-size: 2rem;
+  /* 32px */
+  --h3-size: 1.5rem;
+  /* 24px */
+  --h4-size: 1.25rem;
+  /* 20px */
+  --body-lg: 1.125rem;
+  /* 18px */
+  --body-md: 1rem;
+  /* 16px */
+  --body-sm: 0.875rem;
+  /* 14px */
+  --label-sm: 0.75rem;
+  /* 12px */
 
   --fw-regular: 400;
   --fw-medium: 500;
@@ -137,7 +137,9 @@
 /* ─────────────────────────────────────────
    CSS RESET & BASE
    ───────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -159,7 +161,8 @@ body {
   overflow-x: hidden;
 }
 
-img, svg {
+img,
+svg {
   display: block;
   max-width: 100%;
 }
@@ -169,11 +172,15 @@ a {
   text-decoration: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -194,21 +201,63 @@ button, input, select, textarea {
   padding-inline: var(--gutter);
 }
 
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.gap-sm { gap: var(--sp-sm); }
-.gap-md { gap: var(--sp-md); }
-.gap-lg { gap: var(--sp-lg); }
+.flex {
+  display: flex;
+}
 
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-lg); }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-lg); }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-lg); }
+.flex-col {
+  flex-direction: column;
+}
 
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-sm {
+  gap: var(--sp-sm);
+}
+
+.gap-md {
+  gap: var(--sp-md);
+}
+
+.gap-lg {
+  gap: var(--sp-lg);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-lg);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-lg);
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-lg);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
 
 /* ─────────────────────────────────────────
    TYPOGRAPHY CLASSES
@@ -276,10 +325,21 @@ button, input, select, textarea {
   text-transform: uppercase;
 }
 
-.text-primary { color: var(--primary); }
-.text-secondary { color: var(--secondary); }
-.text-muted { color: var(--on-surface-variant); }
-.text-white { color: #fff; }
+.text-primary {
+  color: var(--primary);
+}
+
+.text-secondary {
+  color: var(--secondary);
+}
+
+.text-muted {
+  color: var(--on-surface-variant);
+}
+
+.text-white {
+  color: #fff;
+}
 
 /* ─────────────────────────────────────────
    BUTTONS
@@ -308,22 +368,22 @@ button, input, select, textarea {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0);
+  background: rgba(255, 255, 255, 0);
   transition: background var(--transition-fast);
 }
 
 .btn:hover::before {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, #0066f0 100%);
   color: var(--on-primary);
-  box-shadow: 0 4px 16px rgba(0, 86, 210, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 4px 16px rgba(0, 86, 210, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 24px rgba(0, 86, 210, 0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 6px 24px rgba(0, 86, 210, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
 }
 
@@ -335,7 +395,7 @@ button, input, select, textarea {
 .btn-secondary {
   background: linear-gradient(135deg, var(--secondary) 0%, #22963f 100%);
   color: var(--on-secondary);
-  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.30), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .btn-secondary:hover {
@@ -536,11 +596,30 @@ button, input, select, textarea {
   text-transform: uppercase;
 }
 
-.badge-primary { background: var(--primary); color: #fff; }
-.badge-success { background: var(--secondary); color: #fff; }
-.badge-warning { background: #f59e0b; color: #fff; }
-.badge-error { background: var(--error); color: #fff; }
-.badge-neutral { background: var(--surface-container-highest); color: var(--on-surface-variant); }
+.badge-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.badge-success {
+  background: var(--secondary);
+  color: #fff;
+}
+
+.badge-warning {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.badge-error {
+  background: var(--error);
+  color: #fff;
+}
+
+.badge-neutral {
+  background: var(--surface-container-highest);
+  color: var(--on-surface-variant);
+}
 
 .status-dot {
   width: 8px;
@@ -549,9 +628,18 @@ button, input, select, textarea {
   display: inline-block;
 }
 
-.status-online { background: var(--secondary); box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25); }
-.status-away { background: #f59e0b; }
-.status-offline { background: var(--outline); }
+.status-online {
+  background: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+.status-away {
+  background: #f59e0b;
+}
+
+.status-offline {
+  background: var(--outline);
+}
 
 /* ─────────────────────────────────────────
    SECTION HELPERS
@@ -651,6 +739,7 @@ button, input, select, textarea {
     opacity: 0;
     transform: translateY(24px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -658,8 +747,13 @@ button, input, select, textarea {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
@@ -667,6 +761,7 @@ button, input, select, textarea {
     opacity: 0;
     transform: scale(0.92);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -674,23 +769,47 @@ button, input, select, textarea {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 86, 210, 0.3); }
-  50% { box-shadow: 0 0 0 12px rgba(0, 86, 210, 0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 86, 210, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 0 12px rgba(0, 86, 210, 0);
+  }
 }
 
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
+  0% {
+    background-position: -400px 0;
+  }
+
+  100% {
+    background-position: 400px 0;
+  }
 }
 
 .animate-float {
@@ -706,29 +825,65 @@ button, input, select, textarea {
 }
 
 /* Staggered animation delays */
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-.delay-5 { animation-delay: 0.5s; }
+.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.delay-2 {
+  animation-delay: 0.2s;
+}
+
+.delay-3 {
+  animation-delay: 0.3s;
+}
+
+.delay-4 {
+  animation-delay: 0.4s;
+}
+
+.delay-5 {
+  animation-delay: 0.5s;
+}
 
 /* ─────────────────────────────────────────
    RESPONSIVE UTILITIES
    ───────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-2 { grid-template-columns: 1fr; }
-  .section { padding-block: var(--sp-4xl); }
-  .hide-mobile { display: none !important; }
+
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding-block: var(--sp-4xl);
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
 }
 
 @media (max-width: 480px) {
-  .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .section { padding-block: var(--sp-2xl); }
+
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding-block: var(--sp-2xl);
+  }
 }
 
 /* ─────────────────────────────────────────
