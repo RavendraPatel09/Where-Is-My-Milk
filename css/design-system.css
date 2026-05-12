@@ -300,17 +300,14 @@ textarea {
   font-size: var(--body-lg);
   line-height: var(--lh-relaxed);
 }
-
 .body-md {
   font-size: var(--body-md);
   line-height: var(--lh-relaxed);
 }
-
 .body-sm {
   font-size: var(--body-sm);
   line-height: var(--lh-normal);
 }
-
 .label {
   font-size: var(--body-sm);
   font-weight: var(--fw-semibold);
